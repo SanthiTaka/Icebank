@@ -1,0 +1,155 @@
+<!doctype html>
+
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>ICEIBank</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    ```
+    <main>
+      <h1>ICEIBank</h1>
+
+      <!-- LOGIN -->
+
+      <section id="login-section">
+        <h2>Login</h2>
+
+        <form id="login-form">
+          <label for="usuario"> Usuário </label>
+
+          <input type="text" id="usuario" value="admin" required />
+
+          <label for="senha"> Senha </label>
+
+          <input type="password" id="senha" value="123456" required />
+
+          <button type="submit">Entrar</button>
+        </form>
+
+        <p id="login-mensagem"></p>
+      </section>
+
+      <!-- BANCO -->
+
+      <section id="bank-section" hidden>
+        <h2>Operações bancárias</h2>
+
+        <button type="button" id="logout-button">Sair</button>
+
+        <hr />
+
+        <!-- AGÊNCIA -->
+
+        <label for="agencia"> Agência de entrada </label>
+
+        <select id="agencia">
+          <option value="4093">Agência 0 — Porta 4093</option>
+
+          <option value="4094">Agência 1 — Porta 4094</option>
+
+          <option value="4095">Agência 2 — Porta 4095</option>
+        </select>
+
+        <hr />
+
+        <!-- CONSULTA -->
+
+        <h3>Consultar conta</h3>
+
+        <div id="consulta-form">
+          <input type="number" id="consulta-id" placeholder="ID da conta" />
+
+          <button type="button" id="consulta-button">Consultar</button>
+        </div>
+
+        <div id="conta-resultado"></div>
+
+        <hr />
+
+        <!-- DEPÓSITO -->
+
+        <h3>Depósito</h3>
+
+        <div id="deposito-form">
+          <input type="number" id="deposito-id" placeholder="ID da conta" />
+
+          <input
+            type="number"
+            id="deposito-valor"
+            placeholder="Valor"
+            step="0.01"
+            min="0.01"
+          />
+
+          <button type="button" id="deposito-button">Depositar</button>
+        </div>
+
+        <div id="deposito-resultado"></div>
+
+        <hr />
+
+        <!-- SAQUE -->
+
+        <h3>Saque</h3>
+
+        <div id="saque-form">
+          <input type="number" id="saque-id" placeholder="ID da conta" />
+
+          <input
+            type="number"
+            id="saque-valor"
+            placeholder="Valor"
+            step="0.01"
+            min="0.01"
+          />
+
+          <button type="button" id="saque-button">Sacar</button>
+        </div>
+
+        <div id="saque-resultado"></div>
+
+        <hr />
+
+        <!-- TRANSFERÊNCIA -->
+
+        <h3>Transferência</h3>
+
+        <div id="transferencia-form">
+          <input
+            type="number"
+            id="transferencia-origem"
+            placeholder="Conta de origem"
+          />
+
+          <input
+            type="number"
+            id="transferencia-destino"
+            placeholder="Conta de destino"
+          />
+
+          <input
+            type="number"
+            id="transferencia-valor"
+            placeholder="Valor"
+            step="0.01"
+            min="0.01"
+          />
+
+          <button type="button" id="transferencia-button">Transferir</button>
+        </div>
+
+        <div id="transferencia-resultado"></div>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+    ```
+  </body>
+</html>

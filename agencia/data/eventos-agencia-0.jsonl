@@ -9,3 +9,35 @@
 {"agencia":"agencia-0","tipo":"TRANSFERENCIA_INTERAGENCIA_ENVIO","timestampLamport":2,"horaParede":"2026-09-07T21:25:37.191060100Z","detalhes":{"valor":30.0,"origem":0,"saldoOrigem":970.0,"destino":1,"agenciaDestino":1}}
 {"agencia":"agencia-0","tipo":"TRANSFERENCIA_INTERAGENCIA_ENVIO","timestampLamport":4,"horaParede":"2026-09-07T21:28:36.863927200Z","detalhes":{"valor":30.0,"origem":0,"saldoOrigem":940.0,"destino":1,"agenciaDestino":1}}
 {"agencia":"agencia-0","tipo":"TRANSFERENCIA_INTERAGENCIA_FALHA","timestampLamport":5,"horaParede":"2026-09-07T21:28:36.871927300Z","detalhes":{"valor":30.0,"erro":"I/O error on POST request for \"http://localhost:4094/transferencias/receber\": Connection refused: connect","origem":0,"destino":1}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampLamport":1,"horaParede":"2026-09-07T22:20:54.600491400Z","detalhes":{"idConta":0,"titular":"Cliente 1","saldo":1000.0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampLamport":2,"horaParede":"2026-09-07T22:21:36.032644500Z","detalhes":{"idConta":3,"titular":"Cliente 2","saldo":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":5,"horaParede":"2026-09-07T22:23:47.779726800Z","detalhes":{"idConta":3,"saldoAtual":200.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":7,"horaParede":"2026-09-07T22:24:00.091175600Z","detalhes":{"idConta":3,"saldoAtual":300.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":9,"horaParede":"2026-09-07T22:25:05.488297500Z","detalhes":{"idConta":3,"saldoAtual":400.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":10,"horaParede":"2026-09-07T22:25:17.101973800Z","detalhes":{"idConta":3,"saldoAtual":500.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"SAQUE","timestampLamport":11,"horaParede":"2026-09-07T22:25:29.274788700Z","detalhes":{"idConta":3,"saldoAtual":400.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":13,"horaParede":"2026-09-07T22:32:48.528751100Z","detalhes":{"idConta":3,"saldoAtual":500.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":15,"horaParede":"2026-09-07T22:33:20.641983500Z","detalhes":{"idConta":3,"saldoAtual":600.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":17,"horaParede":"2026-09-07T22:33:38.598033800Z","detalhes":{"idConta":3,"saldoAtual":700.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":18,"horaParede":"2026-09-07T22:36:40.761801700Z","detalhes":{"idConta":3,"saldoAtual":800.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":19,"horaParede":"2026-09-07T22:37:45.824434300Z","detalhes":{"idConta":0,"saldoAtual":1040.0,"valor":40.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":20,"horaParede":"2026-09-07T22:37:54.072640900Z","detalhes":{"idConta":0,"saldoAtual":1140.0,"valor":100.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":21,"horaParede":"2026-09-07T22:38:20.953362900Z","detalhes":{"idConta":0,"saldoAtual":1190.0,"valor":50.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":22,"horaParede":"2026-09-07T22:39:50.309735600Z","detalhes":{"idConta":0,"saldoAtual":1230.0,"valor":40.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":24,"horaParede":"2026-09-07T22:40:34.573262500Z","detalhes":{"idConta":3,"saldoAtual":840.0,"valor":40.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":25,"horaParede":"2026-09-07T22:40:39.087828800Z","detalhes":{"idConta":3,"saldoAtual":840.01,"valor":0.01}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":26,"horaParede":"2026-09-07T22:42:19.415071900Z","detalhes":{"idConta":3,"saldoAtual":890.01,"valor":50.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":27,"horaParede":"2026-09-07T22:42:33.870722100Z","detalhes":{"idConta":3,"saldoAtual":24122.01,"valor":23232.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":28,"horaParede":"2026-09-07T22:46:48.537982Z","detalhes":{"idConta":0,"saldoAtual":1233.0,"valor":3.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":29,"horaParede":"2026-09-07T22:48:01.013571700Z","detalhes":{"idConta":3,"saldoAtual":24172.01,"valor":50.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":30,"horaParede":"2026-09-07T22:48:41.427060800Z","detalhes":{"idConta":3,"saldoAtual":24672.01,"valor":500.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":31,"horaParede":"2026-09-07T22:49:38.225987200Z","detalhes":{"idConta":3,"saldoAtual":24694.01,"valor":22.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":32,"horaParede":"2026-09-07T22:49:40.776399800Z","detalhes":{"idConta":3,"saldoAtual":24698.01,"valor":4.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":33,"horaParede":"2026-09-07T22:50:55.894305800Z","detalhes":{"idConta":3,"saldoAtual":24702.01,"valor":4.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":34,"horaParede":"2026-09-07T22:51:07.458561300Z","detalhes":{"idConta":3,"saldoAtual":24704.01,"valor":2.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":35,"horaParede":"2026-09-07T22:51:30.296284300Z","detalhes":{"idConta":3,"saldoAtual":24706.01,"valor":2.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":36,"horaParede":"2026-09-07T22:51:34.894585900Z","detalhes":{"idConta":3,"saldoAtual":24708.01,"valor":2.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":37,"horaParede":"2026-09-07T22:52:26.954810Z","detalhes":{"idConta":3,"saldoAtual":24730.01,"valor":22.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":38,"horaParede":"2026-09-07T22:54:19.880574Z","detalhes":{"idConta":3,"saldoAtual":24741.01,"valor":11.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":39,"horaParede":"2026-09-07T22:54:49.765377500Z","detalhes":{"idConta":3,"saldoAtual":24763.01,"valor":22.0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampLamport":40,"horaParede":"2026-09-07T22:55:09.084643Z","detalhes":{"idConta":3,"saldoAtual":24765.01,"valor":2.0}}

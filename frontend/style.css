@@ -1,0 +1,43 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+main {
+  max-width: 700px;
+  margin: auto;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+input,
+select,
+button {
+  padding: 10px;
+  font-size: 16px;
+}
+
+button {
+  cursor: pointer;
+}
+
+hr {
+  margin: 30px 0;
+}
+
+#login-mensagem,
+#conta-resultado,
+#deposito-resultado,
+#saque-resultado,
+#transferencia-resultado {
+  margin-top: 10px;
+}

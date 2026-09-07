@@ -36,9 +36,9 @@ A distribuição das contas utiliza a operação módulo 3:
 
 Assim:
 
-* IDs 0, 3, 6, 9... pertencem à Agência 0;
-* IDs 1, 4, 7, 10... pertencem à Agência 1;
-* IDs 2, 5, 8, 11... pertencem à Agência 2.
+- IDs 0, 3, 6, 9... pertencem à Agência 0;
+- IDs 1, 4, 7, 10... pertencem à Agência 1;
+- IDs 2, 5, 8, 11... pertencem à Agência 2.
 
 Como consequência, cada agência gera IDs começando pelo seu número e incrementando de 3 em 3.
 
@@ -90,8 +90,8 @@ Em uma transferência bem-sucedida, o valor é subtraído da conta de origem e a
 
 Por exemplo, considerando uma transferência de R$ 30 da conta 0 para a conta 1:
 
-* Conta 0: R$ 1.000 → R$ 970
-* Conta 1: R$ 500 → R$ 530
+- Conta 0: R$ 1.000 → R$ 970
+- Conta 1: R$ 500 → R$ 530
 
 O valor transferido permanece o mesmo, alterando apenas a distribuição dos saldos entre as duas contas.
 
@@ -140,3 +140,35 @@ Se a chave secreta utilizada para assinar os JWTs vazasse, a segurança da auten
 Como a aplicação atualmente utiliza o JWT para autenticar as requisições, um atacante poderia criar um token com uma identidade escolhida por ele e acessar os endpoints protegidos. Por isso, a chave secreta deve ser mantida em segurança e não deve ser exposta no código-fonte ou no repositório em uma aplicação real.
 
 Em um ambiente de produção, a chave deveria ser armazenada em uma variável de ambiente ou em um gerenciador seguro de segredos. Caso ocorresse um vazamento, seria necessário substituir imediatamente a chave e invalidar os tokens que foram assinados com a chave comprometida.
+
+Parte G
+
+### 1. Como o frontend “lembra” de reenviar o token em cada requisição depois do login?
+
+Após o login, o backend retorna um token JWT. O frontend armazena esse token no `localStorage` do navegador utilizando a chave `iceibank_token`.
+
+Nas requisições que precisam de autenticação, o frontend utiliza a função `fazerRequisicao()`. Essa função recupera o token armazenado no `localStorage` e o adiciona automaticamente ao cabeçalho HTTP da requisição:
+
+`Authorization: Bearer <token>`
+
+Dessa forma, o token não precisa ser informado manualmente em cada operação. Enquanto o token estiver armazenado e válido, ele é reutilizado nas requisições de consulta, depósito, saque e transferência.
+
+### 2. Se o token expirar enquanto alguém está usando o frontend no meio de uma operação, o que acontece na sua implementação?
+
+O backend retorna o código HTTP `401 Unauthorized` quando o token está inválido ou expirado.
+
+No frontend, a função `fazerRequisicao()` verifica especificamente esse status. Quando recebe um `401`, ela remove o token armazenado no `localStorage`, retorna a interface para a tela de login e exibe a mensagem:
+
+> "Sessão expirada ou token inválido. Faça login novamente."
+
+Portanto, a pessoa usuária recebe uma informação específica sobre a expiração ou invalidação da sessão, em vez de visualizar apenas uma mensagem de erro genérica.
+
+### 3. Esta unidade da disciplina trata de arquitetura MVC. No seu frontend, onde fica o “M” (Model), o “V” (View) e o “C” (Controller)? Eles existem de forma clara na sua implementação, ou o código ficou mais misturado do que o padrão sugere?
+
+No frontend desenvolvido com HTML, CSS e JavaScript, a separação MVC existe de maneira conceitual, mas não está estruturada de forma tão rígida quanto em frameworks que seguem explicitamente esse padrão.
+
+- **View (V):** está principalmente no `index.html`, que define a estrutura da interface, os campos, botões e áreas onde os resultados das operações são apresentados.
+- **Model (M):** corresponde principalmente aos dados das contas e das operações bancárias recebidos e enviados em formato JSON entre o frontend e a API. Esses dados representam as informações que a aplicação manipula.
+- **Controller (C):** está principalmente no `script.js`, que trata os eventos dos usuários, realiza as requisições para a API, processa as respostas e determina quais informações devem ser apresentadas na interface.
+
+Portanto, os papéis de Model, View e Controller podem ser identificados, porém a separação não é completamente rígida. Como foi utilizado JavaScript puro, algumas responsabilidades ficam concentradas no `script.js`, fazendo com que o frontend seja mais misturado do que uma implementação MVC tradicional.
