@@ -116,3 +116,27 @@ Durante o experimento, foi possível observar eventos de agências diferentes co
 O relógio vetorial do Sprint 2 é motivado justamente por essa limitação. Ele mantém informações sobre o estado lógico de cada agência, permitindo comparar dois eventos e determinar se existe uma relação de causalidade ou se eles são concorrentes.
 
 Assim, enquanto o relógio de Lamport fornece uma ordenação lógica consistente dos eventos, o relógio vetorial permite identificar de forma mais precisa a relação de causalidade entre eventos distribuídos.
+
+Parte F:
+
+1. Qual a diferença entre autenticação e autorização? Sua implementação verifica só uma das duas, ou as duas? Por exemplo: um usuário autenticado consegue sacar de uma conta que não é dele, na sua implementação atual?
+
+Autenticação é o processo de verificar quem é o usuário, enquanto autorização determina quais recursos ou operações esse usuário pode acessar. Na implementação atual, foi realizada apenas a autenticação. O usuário informa as credenciais admin e 123456 no endpoint /auth/login e, após a validação, recebe um JWT que deve ser enviado nas requisições protegidas.
+
+A aplicação verifica se o JWT é válido e não está expirado, mas ainda não possui um mecanismo de autorização associado às contas. Portanto, um usuário autenticado consegue realizar operações em qualquer conta, desde que possua um token válido. Por exemplo, atualmente não existe uma regra que impeça o usuário autenticado de sacar de uma conta que não seja sua. Essa limitação é aceitável no escopo da Sprint 1, que tem como objetivo principal demonstrar autenticação por JWT.
+
+2. Por que o servidor não precisa consultar um banco de dados para validar a assinatura de um JWT a cada requisição? O que isso implica sobre escalabilidade, comparado a guardar sessões em memória no servidor?
+
+O JWT contém as informações necessárias para sua validação e é assinado digitalmente com uma chave secreta conhecida pelo servidor. Assim, a cada requisição, o servidor pode verificar localmente a assinatura e a validade temporal do token, sem precisar consultar um banco de dados para descobrir se aquela sessão existe.
+
+Isso torna o mecanismo mais escalável, pois múltiplas requisições podem ser validadas sem depender de uma consulta a um armazenamento central de sessões. Além disso, diferentes instâncias da aplicação podem validar o mesmo JWT, desde que possuam a mesma chave de assinatura. Dessa forma, o sistema pode ser distribuído entre várias agências ou servidores sem precisar manter uma sessão armazenada em cada instância.
+
+Em comparação, sessões mantidas em memória exigem que o servidor que recebeu a requisição tenha acesso à sessão correspondente. Em uma arquitetura com várias instâncias, isso pode exigir mecanismos adicionais, como sticky sessions ou um armazenamento compartilhado de sessões, aumentando a complexidade da infraestrutura.
+
+3. O que aconteceria com a segurança do sistema se a chave secreta usada para assinar o JWT vazasse?
+
+Se a chave secreta utilizada para assinar os JWTs vazasse, a segurança da autenticação seria comprometida. Um atacante que obtivesse essa chave poderia criar e assinar tokens JWT falsos, fazendo com que o sistema os considerasse legítimos.
+
+Como a aplicação atualmente utiliza o JWT para autenticar as requisições, um atacante poderia criar um token com uma identidade escolhida por ele e acessar os endpoints protegidos. Por isso, a chave secreta deve ser mantida em segurança e não deve ser exposta no código-fonte ou no repositório em uma aplicação real.
+
+Em um ambiente de produção, a chave deveria ser armazenada em uma variável de ambiente ou em um gerenciador seguro de segredos. Caso ocorresse um vazamento, seria necessário substituir imediatamente a chave e invalidar os tokens que foram assinados com a chave comprometida.
