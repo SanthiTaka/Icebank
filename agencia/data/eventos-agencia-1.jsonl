@@ -1,0 +1,7 @@
+{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampLamport":1,"horaParede":"2026-09-07T20:46:41.059300200Z","detalhes":{"titular":"Joao","idConta":1,"saldo":500.0}}
+{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampLamport":1,"horaParede":"2026-09-07T21:18:53.254336100Z","detalhes":{"titular":"Maria","saldo":500.0,"idConta":1}}
+{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampLamport":1,"horaParede":"2026-09-07T21:22:30.097030900Z","detalhes":{"idConta":1,"titular":"Maria","saldo":500.0}}
+{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampLamport":1,"horaParede":"2026-09-07T21:25:32.248050600Z","detalhes":{"idConta":1,"titular":"Maria","saldo":500.0}}
+{"agencia":"agencia-1","tipo":"TRANSFERENCIA_INTERAGENCIA_RECEBIMENTO","timestampLamport":3,"horaParede":"2026-09-07T21:25:37.240263600Z","detalhes":{"origem":0,"valor":30.0,"saldoDestino":530.0,"destino":1,"timestampRecebido":2}}
+{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampLamport":5,"horaParede":"2026-09-07T21:27:17.665398600Z","detalhes":{"idConta":4,"titular":"Pedro","saldo":200.0}}
+{"agencia":"agencia-1","tipo":"TRANSFERENCIA_LOCAL","timestampLamport":6,"horaParede":"2026-09-07T21:27:25.392807500Z","detalhes":{"origem":1,"valor":50.0,"saldoDestino":250.0,"destino":4,"saldoOrigem":480.0}}

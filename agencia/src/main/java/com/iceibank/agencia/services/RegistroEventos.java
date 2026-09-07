@@ -1,38 +1,41 @@
 package com.iceibank.agencia.services;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RegistroEventos {
 
     private final String nomeAgencia;
-    private final File arquivo;
-    private final ObjectMapper objectMapper;
+    private final Path caminhoArquivo;
 
-    public RegistroEventos(String nomeAgencia) throws IOException {
+    public RegistroEventos(
+            @Value("${server.port:4093}") int porta
+    ) throws IOException {
 
-        this.nomeAgencia = nomeAgencia;
-        this.objectMapper = new ObjectMapper();
+        int agencia = porta - 4093;
 
-        File pastaDados = new File("data");
+        this.nomeAgencia = "agencia-" + agencia;
 
-        if (!pastaDados.exists()) {
-            pastaDados.mkdirs();
-        }
+        Path pastaDados = Paths.get("data");
 
-        this.arquivo = new File(
-                pastaDados,
+        Files.createDirectories(pastaDados);
+
+        this.caminhoArquivo = pastaDados.resolve(
                 "eventos-" + nomeAgencia + ".jsonl"
         );
     }
 
-    public synchronized Map<String, Object> registrar(
+    public Map<String, Object> registrar(
             String tipo,
             int timestampLamport,
             Map<String, Object> detalhes
@@ -46,10 +49,13 @@ public class RegistroEventos {
         evento.put("horaParede", Instant.now().toString());
         evento.put("detalhes", detalhes);
 
-        String json = objectMapper.writeValueAsString(evento);
+        String linha = paraJson(evento);
 
-        try (FileWriter writer = new FileWriter(arquivo, true)) {
-            writer.write(json);
+        try (FileWriter writer = new FileWriter(
+                caminhoArquivo.toFile(),
+                true
+        )) {
+            writer.write(linha);
             writer.write(System.lineSeparator());
         }
 
@@ -59,5 +65,52 @@ public class RegistroEventos {
         );
 
         return evento;
+    }
+
+    @SuppressWarnings("unchecked")
+    private String paraJson(Object valor) {
+
+        if (valor == null) {
+            return "null";
+        }
+
+        if (valor instanceof Map) {
+
+            StringBuilder sb = new StringBuilder("{");
+
+            Map<String, Object> mapa
+                    = (Map<String, Object>) valor;
+
+            boolean primeiro = true;
+
+            for (Map.Entry<String, Object> entrada : mapa.entrySet()) {
+
+                if (!primeiro) {
+                    sb.append(",");
+                }
+
+                sb.append("\"")
+                        .append(entrada.getKey())
+                        .append("\":");
+
+                sb.append(paraJson(entrada.getValue()));
+
+                primeiro = false;
+            }
+
+            sb.append("}");
+
+            return sb.toString();
+        }
+
+        if (valor instanceof Number) {
+            return valor.toString();
+        }
+
+        String texto = valor.toString()
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"");
+
+        return "\"" + texto + "\"";
     }
 }

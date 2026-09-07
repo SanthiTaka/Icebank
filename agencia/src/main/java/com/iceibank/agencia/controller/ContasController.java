@@ -1,75 +1,87 @@
 package com.iceibank.agencia.controller;
 
-import com.iceibank.agencia.model.Conta;
-import com.iceibank.agencia.services.RelogioLamport;
-import com.iceibank.agencia.services.RegistroEventos;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import com.iceibank.agencia.model.Conta;
+import com.iceibank.agencia.services.ContasService;
+import com.iceibank.agencia.services.RegistroEventos;
+import com.iceibank.agencia.services.RelogioLamport;
 
 @RestController
 @RequestMapping("/contas")
 public class ContasController {
 
-    private final Map<Long, Conta> contas = new ConcurrentHashMap<>();
-    private final AtomicLong proximoId = new AtomicLong(0);
-
-    private final RelogioLamport relogioLamport = new RelogioLamport();
+    private final ContasService contasService;
+    private final RelogioLamport relogioLamport;
     private final RegistroEventos registroEventos;
 
-    public ContasController() throws IOException {
-        this.registroEventos = new RegistroEventos("agencia");
+    public ContasController(
+            ContasService contasService,
+            RelogioLamport relogioLamport,
+            RegistroEventos registroEventos
+    ) {
+        this.contasService = contasService;
+        this.relogioLamport = relogioLamport;
+        this.registroEventos = registroEventos;
     }
 
     @PostMapping
-    public ResponseEntity<Conta> criarConta(@RequestBody Conta conta) throws IOException {
-
-        int timestamp = relogioLamport.eventoLocal();
-
-        Long id = proximoId.getAndIncrement();
-        conta.setId(id);
+    public ResponseEntity<Conta> criarConta(
+            @RequestBody Conta conta
+    ) throws IOException {
 
         if (conta.getSaldo() < 0) {
             return ResponseEntity.badRequest().build();
         }
 
-        contas.put(id, conta);
+        int timestamp = relogioLamport.eventoLocal();
+
+        Conta contaCriada = contasService.criar(conta);
 
         registroEventos.registrar(
                 "CRIAR_CONTA",
                 timestamp,
                 Map.of(
-                        "idConta", id,
-                        "titular", conta.getTitular(),
-                        "saldo", conta.getSaldo()
+                        "idConta", contaCriada.getId(),
+                        "titular", contaCriada.getTitular(),
+                        "saldo", contaCriada.getSaldo()
                 )
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(conta);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(contaCriada);
     }
 
     @GetMapping
     public ResponseEntity<List<Conta>> listarContas() {
 
-        int timestamp = relogioLamport.eventoLocal();
+        relogioLamport.eventoLocal();
 
-        return ResponseEntity.ok(new ArrayList<>(contas.values()));
+        return ResponseEntity.ok(contasService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Conta> buscarConta(@PathVariable Long id) {
+    public ResponseEntity<Conta> buscarConta(
+            @PathVariable Long id
+    ) {
 
-        int timestamp = relogioLamport.eventoLocal();
+        relogioLamport.eventoLocal();
 
-        Conta conta = contas.get(id);
+        Conta conta = contasService.buscar(id);
 
         if (conta == null) {
             return ResponseEntity.notFound().build();
@@ -84,26 +96,26 @@ public class ContasController {
             @RequestBody Conta dados
     ) throws IOException {
 
-        int timestamp = relogioLamport.eventoLocal();
-
-        Conta conta = contas.get(id);
+        Conta conta = contasService.buscar(id);
 
         if (conta == null) {
             return ResponseEntity.notFound().build();
         }
 
-        conta.setTitular(dados.getTitular());
+        int timestamp = relogioLamport.eventoLocal();
+
+        Conta contaAtualizada = contasService.atualizar(id, dados);
 
         registroEventos.registrar(
                 "ATUALIZAR_CONTA",
                 timestamp,
                 Map.of(
                         "idConta", id,
-                        "titular", conta.getTitular()
+                        "titular", contaAtualizada.getTitular()
                 )
         );
 
-        return ResponseEntity.ok(conta);
+        return ResponseEntity.ok(contaAtualizada);
     }
 
     @DeleteMapping("/{id}")
@@ -111,13 +123,13 @@ public class ContasController {
             @PathVariable Long id
     ) throws IOException {
 
-        int timestamp = relogioLamport.eventoLocal();
-
-        Conta conta = contas.remove(id);
+        Conta conta = contasService.excluir(id);
 
         if (conta == null) {
             return ResponseEntity.notFound().build();
         }
+
+        int timestamp = relogioLamport.eventoLocal();
 
         registroEventos.registrar(
                 "EXCLUIR_CONTA",
@@ -136,21 +148,21 @@ public class ContasController {
             @RequestBody Map<String, Double> dados
     ) throws IOException {
 
-        int timestamp = relogioLamport.eventoLocal();
-
-        Conta conta = contas.get(id);
-
-        if (conta == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         Double valor = dados.get("valor");
 
         if (valor == null || valor <= 0) {
             return ResponseEntity.badRequest().build();
         }
 
-        conta.setSaldo(conta.getSaldo() + valor);
+        Conta conta = contasService.buscar(id);
+
+        if (conta == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        int timestamp = relogioLamport.eventoLocal();
+
+        Conta contaAtualizada = contasService.depositar(id, valor);
 
         registroEventos.registrar(
                 "DEPOSITO",
@@ -158,11 +170,11 @@ public class ContasController {
                 Map.of(
                         "idConta", id,
                         "valor", valor,
-                        "saldoAtual", conta.getSaldo()
+                        "saldoAtual", contaAtualizada.getSaldo()
                 )
         );
 
-        return ResponseEntity.ok(conta);
+        return ResponseEntity.ok(contaAtualizada);
     }
 
     @PostMapping("/{id}/saque")
@@ -171,25 +183,27 @@ public class ContasController {
             @RequestBody Map<String, Double> dados
     ) throws IOException {
 
-        int timestamp = relogioLamport.eventoLocal();
-
-        Conta conta = contas.get(id);
-
-        if (conta == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         Double valor = dados.get("valor");
 
         if (valor == null || valor <= 0) {
             return ResponseEntity.badRequest().build();
         }
 
-        if (conta.getSaldo() < valor) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        Conta conta = contasService.buscar(id);
+
+        if (conta == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        conta.setSaldo(conta.getSaldo() - valor);
+        if (conta.getSaldo() < valor) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build();
+        }
+
+        int timestamp = relogioLamport.eventoLocal();
+
+        Conta contaAtualizada = contasService.sacar(id, valor);
 
         registroEventos.registrar(
                 "SAQUE",
@@ -197,10 +211,10 @@ public class ContasController {
                 Map.of(
                         "idConta", id,
                         "valor", valor,
-                        "saldoAtual", conta.getSaldo()
+                        "saldoAtual", contaAtualizada.getSaldo()
                 )
         );
 
-        return ResponseEntity.ok(conta);
-    }   
+        return ResponseEntity.ok(contaAtualizada);
+    }
 }

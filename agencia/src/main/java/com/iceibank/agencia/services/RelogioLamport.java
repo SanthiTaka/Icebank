@@ -1,5 +1,8 @@
 package com.iceibank.agencia.services;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RelogioLamport {
 
     private int contador = 0;
@@ -16,10 +19,6 @@ public class RelogioLamport {
 
     public synchronized int aoReceber(int timestampRecebido) {
         contador = Math.max(contador, timestampRecebido) + 1;
-        return contador;
-    }
-
-    public synchronized int getContador() {
         return contador;
     }
 }
