@@ -94,3 +94,25 @@ Por exemplo, considerando uma transferência de R$ 30 da conta 0 para a conta 1:
 * Conta 1: R$ 500 → R$ 530
 
 O valor transferido permanece o mesmo, alterando apenas a distribuição dos saldos entre as duas contas.
+
+## Parte E — Linha do tempo unificada
+
+### 1. O relógio de Lamport garante que, se A aconteceu antes de B causalmente, timestamp(A) < timestamp(B). Ele não garante a volta. O que isso significa na prática quando vemos dois eventos com timestamps diferentes na linha do tempo, mas sem saber se um realmente influenciou o outro?
+
+Significa que a diferença entre os timestamps não é suficiente para determinar que existe uma relação causal entre os eventos.
+
+O relógio de Lamport garante a seguinte propriedade: se o evento A causou o evento B, então o timestamp de A será menor que o timestamp de B.
+
+Porém, o contrário não é necessariamente verdadeiro. Se A possui timestamp 5 e B possui timestamp 8, não podemos concluir apenas por esses valores que A causou B. Os eventos podem ter ocorrido de forma independente em diferentes agências.
+
+Portanto, o relógio de Lamport permite preservar relações de causalidade conhecidas, mas não permite identificar sozinho todas as relações causais existentes no sistema.
+
+### 2. Baseado no que foi observado: o relógio de Lamport, sozinho, seria suficiente para um sistema que precisa distinguir com certeza “A e B são concorrentes” de “A aconteceu antes de B”? Por que isso motiva o relógio vetorial do Sprint 2?
+
+Não. O relógio de Lamport sozinho não é suficiente para distinguir com certeza eventos concorrentes de eventos que possuem uma relação causal.
+
+Durante o experimento, foi possível observar eventos de agências diferentes com o mesmo timestamp de Lamport. Esses eventos podem ser considerados concorrentes quando não existe uma cadeia causal entre eles. Porém, quando dois eventos possuem timestamps diferentes, não é possível concluir apenas pelos valores do relógio que um evento causou o outro.
+
+O relógio vetorial do Sprint 2 é motivado justamente por essa limitação. Ele mantém informações sobre o estado lógico de cada agência, permitindo comparar dois eventos e determinar se existe uma relação de causalidade ou se eles são concorrentes.
+
+Assim, enquanto o relógio de Lamport fornece uma ordenação lógica consistente dos eventos, o relógio vetorial permite identificar de forma mais precisa a relação de causalidade entre eventos distribuídos.
