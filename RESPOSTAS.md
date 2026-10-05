@@ -275,3 +275,19 @@ Sim. Como o algoritmo compara cada evento com todos os eventos posteriores, a qu
 Com poucos eventos isso é aceitável, mas com milhões de registros o custo de processamento seria muito alto.
 
 Uma alternativa seria limitar a comparação a janelas de tempo ou subconjuntos de eventos relevantes, evitando comparar eventos que claramente não precisam ser relacionados. Também seria possível indexar eventos por processo, utilizar processamento incremental conforme novos eventos chegam ou empregar sistemas especializados de processamento distribuído para analisar grandes volumes de logs.
+
+## Sprint 2 — Funcionalidade Adicional
+
+### Confirmação de crédito via mensageria
+
+Como funcionalidade adicional da Sprint 2, foi implementado um mecanismo de confirmação de crédito entre as agências.
+
+Na implementação obrigatória, a agência de origem publica uma mensagem solicitando que outra agência credite determinado valor em uma conta. Porém, a resposta HTTP para a transferência indica apenas que essa mensagem foi publicada no RabbitMQ, e não que o crédito realmente foi aplicado.
+
+Para melhorar a observabilidade desse fluxo, após a agência de destino consumir a mensagem e aplicar o crédito com sucesso, ela publica uma segunda mensagem usando a routing key `agencia.<id>.confirmacao`.
+
+Cada agência possui uma fila adicional para receber essas confirmações. Quando a agência de origem consome a mensagem, é registrado no log o evento `CONFIRMACAO_CREDITO_RECEBIDA`.
+
+A confirmação somente é publicada se a conta de destino existir e o crédito for realmente aplicado. Caso a mensagem de crédito seja recebida e a conta não exista, o sistema registra `CREDITO_REMOTO_FALHOU` e nenhuma confirmação é enviada.
+
+Escolhi essa funcionalidade porque ela complementa a arquitetura assíncrona da Sprint 2. A publicação inicial informa que o RabbitMQ recebeu a solicitação, enquanto a confirmação permite observar posteriormente que a operação de crédito foi efetivamente processada pela agência de destino.

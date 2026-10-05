@@ -7,6 +7,7 @@ import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +26,12 @@ public class RabbitMQConfig {
         );
     }
 
+    // =====================================================
+    // FILA DE CRÉDITOS
+    // =====================================================
+
     @Bean
-    public Queue filaAgencia(
+    public Queue filaAgenciaCredito(
             @Value("${server.port:4093}") int porta
     ) {
 
@@ -41,8 +46,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Binding bindingAgencia(
-            Queue filaAgencia,
+    public Binding bindingCredito(
+            @Qualifier("filaAgenciaCredito") Queue fila,
             TopicExchange exchangeIceibank,
             @Value("${server.port:4093}") int porta
     ) {
@@ -52,11 +57,52 @@ public class RabbitMQConfig {
 
         String routingKey =
                 "agencia."
-                + idAgencia
-                + ".creditar";
+                        + idAgencia
+                        + ".creditar";
 
         return BindingBuilder
-                .bind(filaAgencia)
+                .bind(fila)
+                .to(exchangeIceibank)
+                .with(routingKey);
+    }
+
+    // =====================================================
+    // FILA DE CONFIRMAÇÕES
+    // =====================================================
+
+    @Bean
+    public Queue filaAgenciaConfirmacao(
+            @Value("${server.port:4093}") int porta
+    ) {
+
+        int idAgencia =
+                porta - AgenciaConfig.PORTA_BASE;
+
+        return QueueBuilder
+                .durable(
+                        "fila-confirmacao-agencia-"
+                                + idAgencia
+                )
+                .build();
+    }
+
+    @Bean
+    public Binding bindingConfirmacao(
+            @Qualifier("filaAgenciaConfirmacao") Queue fila,
+            TopicExchange exchangeIceibank,
+            @Value("${server.port:4093}") int porta
+    ) {
+
+        int idAgencia =
+                porta - AgenciaConfig.PORTA_BASE;
+
+        String routingKey =
+                "agencia."
+                        + idAgencia
+                        + ".confirmacao";
+
+        return BindingBuilder
+                .bind(fila)
                 .to(exchangeIceibank)
                 .with(routingKey);
     }
