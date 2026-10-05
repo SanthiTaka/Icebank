@@ -245,3 +245,33 @@ No ambiente atual, isso é aceitável desde que somente componentes autorizados 
 Por isso, a segurança dessa comunicação depende do controle das credenciais e permissões do RabbitMQ. Em um sistema real, seria importante restringir quais aplicações podem publicar e consumir determinadas filas ou exchanges e proteger adequadamente as credenciais.
 
 O JWT continua sendo necessário para proteger as requisições HTTP feitas pelos usuários ao backend, enquanto o RabbitMQ utiliza seu próprio mecanismo de autenticação e autorização para a comunicação interna.
+
+## Sprint 2 — Parte D: Linha do Tempo Causal
+
+### 1. No Sprint 1, o relógio de Lamport não permitia essa análise. O que exatamente, no relógio vetorial, torna possível essa comparação confiável?
+
+O relógio vetorial mantém um contador separado para cada processo ou agência. Dessa forma, cada timestamp carrega informações sobre quais eventos de outras agências já eram conhecidos no momento em que o evento aconteceu.
+
+Ao comparar dois vetores posição por posição, é possível verificar se todas as posições de um vetor são menores ou iguais às posições do outro. Nesse caso existe uma relação de causalidade.
+
+Se um vetor for maior em uma posição e o outro for maior em outra, nenhum deles contém completamente o histórico causal do outro. Nesse caso, os eventos são concorrentes.
+
+O relógio de Lamport utilizava apenas um número inteiro e, por isso, conseguia garantir que uma relação causal produzisse timestamps crescentes, mas não permitia concluir o inverso com certeza.
+
+### 2. Encontre, no seu próprio teste, um par de eventos que o script classificou como concorrente. Faz sentido?
+
+Esta resposta será completada após a execução dos testes no PC da faculdade.
+
+O teste será realizado criando operações independentes em duas agências diferentes, sem transferência ou troca de mensagens entre elas.
+
+Se, por exemplo, uma criação de conta na Agência 0 tiver vetor `[1, 0, 0]` e uma criação independente na Agência 1 tiver vetor `[0, 1, 0]`, o script deverá classificá-las como concorrentes.
+
+Essa classificação faria sentido porque nenhuma das duas operações recebeu informação da outra. Portanto, não existe relação de causa e efeito entre os eventos.
+
+### 3. O algoritmo de comparação é O(n²). Isso seria um problema com milhões de eventos? Como torná-lo mais escalável?
+
+Sim. Como o algoritmo compara cada evento com todos os eventos posteriores, a quantidade de comparações cresce aproximadamente com o quadrado da quantidade de eventos.
+
+Com poucos eventos isso é aceitável, mas com milhões de registros o custo de processamento seria muito alto.
+
+Uma alternativa seria limitar a comparação a janelas de tempo ou subconjuntos de eventos relevantes, evitando comparar eventos que claramente não precisam ser relacionados. Também seria possível indexar eventos por processo, utilizar processamento incremental conforme novos eventos chegam ou empregar sistemas especializados de processamento distribuído para analisar grandes volumes de logs.
