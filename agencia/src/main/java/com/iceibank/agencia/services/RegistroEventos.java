@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class RegistroEventos {
 
     public Map<String, Object> registrar(
             String tipo,
-            int timestampLamport,
+            int[] timestampVetorial,
             Map<String, Object> detalhes
     ) throws IOException {
 
@@ -45,7 +46,7 @@ public class RegistroEventos {
 
         evento.put("agencia", nomeAgencia);
         evento.put("tipo", tipo);
-        evento.put("timestampLamport", timestampLamport);
+        evento.put("timestampVetorial", timestampVetorial.clone());
         evento.put("horaParede", Instant.now().toString());
         evento.put("detalhes", detalhes);
 
@@ -60,7 +61,7 @@ public class RegistroEventos {
         }
 
         System.out.println(
-                "[Lamport " + timestampLamport + "] "
+                "[Vetor " + Arrays.toString(timestampVetorial) + "] "
                 + tipo + " " + detalhes
         );
 
@@ -78,8 +79,8 @@ public class RegistroEventos {
 
             StringBuilder sb = new StringBuilder("{");
 
-            Map<String, Object> mapa
-                    = (Map<String, Object>) valor;
+            Map<String, Object> mapa =
+                    (Map<String, Object>) valor;
 
             boolean primeiro = true;
 
@@ -99,6 +100,26 @@ public class RegistroEventos {
             }
 
             sb.append("}");
+
+            return sb.toString();
+        }
+
+        if (valor instanceof int[]) {
+
+            int[] vetor = (int[]) valor;
+
+            StringBuilder sb = new StringBuilder("[");
+
+            for (int i = 0; i < vetor.length; i++) {
+
+                if (i > 0) {
+                    sb.append(",");
+                }
+
+                sb.append(vetor[i]);
+            }
+
+            sb.append("]");
 
             return sb.toString();
         }

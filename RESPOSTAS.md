@@ -172,3 +172,41 @@ No frontend desenvolvido com HTML, CSS e JavaScript, a separação MVC existe de
 - **Controller (C):** está principalmente no `script.js`, que trata os eventos dos usuários, realiza as requisições para a API, processa as respostas e determina quais informações devem ser apresentadas na interface.
 
 Portanto, os papéis de Model, View e Controller podem ser identificados, porém a separação não é completamente rígida. Como foi utilizado JavaScript puro, algumas responsabilidades ficam concentradas no `script.js`, fazendo com que o frontend seja mais misturado do que uma implementação MVC tradicional.
+
+## Sprint 2 — Parte B: Relógio Vetorial
+
+### 1. Com 3 agências, o vetor tem 3 posições. Se o sistema crescesse para 10 agências, o que aconteceria com o tamanho de cada vetor anexado a cada mensagem? Isso é um problema? Por quê?
+
+O vetor também passaria a ter 10 posições, pois cada posição representa o contador lógico de uma agência. Portanto, quanto maior o número de agências, maior será o vetor enviado junto com cada mensagem.
+
+Em um sistema pequeno, como o ICEIBank, isso não é um grande problema. Porém, em sistemas distribuídos com muitas máquinas ou processos, o tamanho do vetor pode gerar maior consumo de memória, armazenamento e tráfego de rede, pois todas as mensagens precisam carregar um contador para cada processo participante.
+
+### 2. Dado V1 = [3, 1, 0] e V2 = [3, 2, 0], qual evento aconteceu primeiro, ou eles são concorrentes?
+
+O evento representado por V1 aconteceu antes do evento representado por V2.
+
+Comparando posição por posição:
+
+- 3 <= 3
+- 1 <= 2
+- 0 <= 0
+
+Todos os valores de V1 são menores ou iguais aos valores de V2 e pelo menos uma posição é diferente. Portanto:
+
+V1 < V2
+
+Isso indica uma relação causal em que o evento de V1 aconteceu antes do evento de V2.
+
+### 3. Dado V1 = [3, 1, 0] e V2 = [1, 3, 0], qual evento aconteceu primeiro, ou eles são concorrentes?
+
+Os eventos são concorrentes.
+
+Comparando os vetores:
+
+- Na primeira posição, V1 possui 3 e V2 possui 1, então V1 é maior.
+- Na segunda posição, V1 possui 1 e V2 possui 3, então V2 é maior.
+- Na terceira posição, ambos possuem 0.
+
+Portanto, V1 não é menor ou igual a V2 em todas as posições e V2 também não é menor ou igual a V1 em todas as posições.
+
+Isso significa que não existe uma relação de causalidade conhecida entre os dois eventos. Assim, eles são considerados concorrentes.

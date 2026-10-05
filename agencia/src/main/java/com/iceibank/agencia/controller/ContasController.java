@@ -18,23 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 import com.iceibank.agencia.model.Conta;
 import com.iceibank.agencia.services.ContasService;
 import com.iceibank.agencia.services.RegistroEventos;
-import com.iceibank.agencia.services.RelogioLamport;
+import com.iceibank.agencia.services.RelogioVetorial;
 
 @RestController
 @RequestMapping("/contas")
 public class ContasController {
 
     private final ContasService contasService;
-    private final RelogioLamport relogioLamport;
+    private final RelogioVetorial relogioVetorial;
     private final RegistroEventos registroEventos;
 
     public ContasController(
             ContasService contasService,
-            RelogioLamport relogioLamport,
+            RelogioVetorial relogioVetorial,
             RegistroEventos registroEventos
     ) {
         this.contasService = contasService;
-        this.relogioLamport = relogioLamport;
+        this.relogioVetorial = relogioVetorial;
         this.registroEventos = registroEventos;
     }
 
@@ -47,13 +47,15 @@ public class ContasController {
             return ResponseEntity.badRequest().build();
         }
 
-        int timestamp = relogioLamport.eventoLocal();
+        int[] timestampVetorial =
+                relogioVetorial.eventoLocal();
 
-        Conta contaCriada = contasService.criar(conta);
+        Conta contaCriada =
+                contasService.criar(conta);
 
         registroEventos.registrar(
                 "CRIAR_CONTA",
-                timestamp,
+                timestampVetorial,
                 Map.of(
                         "idConta", contaCriada.getId(),
                         "titular", contaCriada.getTitular(),
@@ -69,9 +71,11 @@ public class ContasController {
     @GetMapping
     public ResponseEntity<List<Conta>> listarContas() {
 
-        relogioLamport.eventoLocal();
+        relogioVetorial.eventoLocal();
 
-        return ResponseEntity.ok(contasService.listar());
+        return ResponseEntity.ok(
+                contasService.listar()
+        );
     }
 
     @GetMapping("/{id}")
@@ -79,7 +83,7 @@ public class ContasController {
             @PathVariable Long id
     ) {
 
-        relogioLamport.eventoLocal();
+        relogioVetorial.eventoLocal();
 
         Conta conta = contasService.buscar(id);
 
@@ -102,13 +106,15 @@ public class ContasController {
             return ResponseEntity.notFound().build();
         }
 
-        int timestamp = relogioLamport.eventoLocal();
+        int[] timestampVetorial =
+                relogioVetorial.eventoLocal();
 
-        Conta contaAtualizada = contasService.atualizar(id, dados);
+        Conta contaAtualizada =
+                contasService.atualizar(id, dados);
 
         registroEventos.registrar(
                 "ATUALIZAR_CONTA",
-                timestamp,
+                timestampVetorial,
                 Map.of(
                         "idConta", id,
                         "titular", contaAtualizada.getTitular()
@@ -129,11 +135,12 @@ public class ContasController {
             return ResponseEntity.notFound().build();
         }
 
-        int timestamp = relogioLamport.eventoLocal();
+        int[] timestampVetorial =
+                relogioVetorial.eventoLocal();
 
         registroEventos.registrar(
                 "EXCLUIR_CONTA",
-                timestamp,
+                timestampVetorial,
                 Map.of(
                         "idConta", id
                 )
@@ -160,17 +167,20 @@ public class ContasController {
             return ResponseEntity.notFound().build();
         }
 
-        int timestamp = relogioLamport.eventoLocal();
+        int[] timestampVetorial =
+                relogioVetorial.eventoLocal();
 
-        Conta contaAtualizada = contasService.depositar(id, valor);
+        Conta contaAtualizada =
+                contasService.depositar(id, valor);
 
         registroEventos.registrar(
                 "DEPOSITO",
-                timestamp,
+                timestampVetorial,
                 Map.of(
                         "idConta", id,
                         "valor", valor,
-                        "saldoAtual", contaAtualizada.getSaldo()
+                        "saldoAtual",
+                        contaAtualizada.getSaldo()
                 )
         );
 
@@ -201,17 +211,20 @@ public class ContasController {
                     .build();
         }
 
-        int timestamp = relogioLamport.eventoLocal();
+        int[] timestampVetorial =
+                relogioVetorial.eventoLocal();
 
-        Conta contaAtualizada = contasService.sacar(id, valor);
+        Conta contaAtualizada =
+                contasService.sacar(id, valor);
 
         registroEventos.registrar(
                 "SAQUE",
-                timestamp,
+                timestampVetorial,
                 Map.of(
                         "idConta", id,
                         "valor", valor,
-                        "saldoAtual", contaAtualizada.getSaldo()
+                        "saldoAtual",
+                        contaAtualizada.getSaldo()
                 )
         );
 
