@@ -260,13 +260,11 @@ O relógio de Lamport utilizava apenas um número inteiro e, por isso, conseguia
 
 ### 2. Encontre, no seu próprio teste, um par de eventos que o script classificou como concorrente. Faz sentido?
 
-Esta resposta será completada após a execução dos testes no PC da faculdade.
+No teste realizado, o script identificou como concorrentes eventos de criação de conta ocorridos de forma independente na Agência 0 e na Agência 1.
 
-O teste será realizado criando operações independentes em duas agências diferentes, sem transferência ou troca de mensagens entre elas.
+Essa classificação faz sentido porque as duas operações aconteceram em agências diferentes sem que houvesse troca de mensagens ou transferência entre elas naquele momento.
 
-Se, por exemplo, uma criação de conta na Agência 0 tiver vetor `[1, 0, 0]` e uma criação independente na Agência 1 tiver vetor `[0, 1, 0]`, o script deverá classificá-las como concorrentes.
-
-Essa classificação faria sentido porque nenhuma das duas operações recebeu informação da outra. Portanto, não existe relação de causa e efeito entre os eventos.
+Como nenhum dos eventos possuía conhecimento causal sobre o outro, nenhum dos vetores dominava completamente o outro. Dessa forma, o relógio vetorial permitiu identificar corretamente que os eventos eram concorrentes e que não existia uma relação de causa e efeito entre eles.
 
 ### 3. O algoritmo de comparação é O(n²). Isso seria um problema com milhões de eventos? Como torná-lo mais escalável?
 

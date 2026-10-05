@@ -35,8 +35,7 @@ public class RabbitMQConfig {
             @Value("${server.port:4093}") int porta
     ) {
 
-        int idAgencia =
-                porta - AgenciaConfig.PORTA_BASE;
+        int idAgencia = porta - AgenciaConfig.PORTA_BASE;
 
         return QueueBuilder
                 .durable(
@@ -52,8 +51,7 @@ public class RabbitMQConfig {
             @Value("${server.port:4093}") int porta
     ) {
 
-        int idAgencia =
-                porta - AgenciaConfig.PORTA_BASE;
+        int idAgencia = porta - AgenciaConfig.PORTA_BASE;
 
         String routingKey =
                 "agencia."
@@ -75,8 +73,7 @@ public class RabbitMQConfig {
             @Value("${server.port:4093}") int porta
     ) {
 
-        int idAgencia =
-                porta - AgenciaConfig.PORTA_BASE;
+        int idAgencia = porta - AgenciaConfig.PORTA_BASE;
 
         return QueueBuilder
                 .durable(
@@ -93,8 +90,7 @@ public class RabbitMQConfig {
             @Value("${server.port:4093}") int porta
     ) {
 
-        int idAgencia =
-                porta - AgenciaConfig.PORTA_BASE;
+        int idAgencia = porta - AgenciaConfig.PORTA_BASE;
 
         String routingKey =
                 "agencia."
@@ -106,6 +102,10 @@ public class RabbitMQConfig {
                 .to(exchangeIceibank)
                 .with(routingKey);
     }
+
+    // =====================================================
+    // CONVERSOR JSON
+    // =====================================================
 
     @Bean
     public MessageConverter messageConverter() {
