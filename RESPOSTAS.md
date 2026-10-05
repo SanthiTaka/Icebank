@@ -210,3 +210,38 @@ Comparando os vetores:
 Portanto, V1 não é menor ou igual a V2 em todas as posições e V2 também não é menor ou igual a V1 em todas as posições.
 
 Isso significa que não existe uma relação de causalidade conhecida entre os dois eventos. Assim, eles são considerados concorrentes.
+
+
+## Sprint 2 — Parte C: Publish/Subscribe entre Agências
+
+### 1. No passo 4 da tarefa, o que aconteceu quando a Agência 1 voltou? Se a mensagem não foi aplicada, isso ocorreu porque a mensageria falhou ou por outro motivo?
+
+Quando a Agência 1 voltou a se conectar ao RabbitMQ, a mensagem que havia sido publicada enquanto ela estava fora do ar foi entregue pela fila.
+
+Porém, como as contas do ICEIBank ainda são armazenadas apenas em memória, ao reiniciar a Agência 1 as contas que existiam anteriormente foram perdidas. Dessa forma, o consumidor recebeu a mensagem, mas não encontrou a conta de destino para aplicar o crédito.
+
+Nesse caso, o sistema registra um evento `CREDITO_REMOTO_FALHOU`, informando que a conta não foi encontrada.
+
+Portanto, a falha não ocorreu porque o RabbitMQ perdeu a mensagem. Pelo contrário: a mensagem foi preservada e posteriormente entregue. O problema está na ausência de persistência das contas.
+
+### 2. Compare esse comportamento com o Sprint 1. O que melhorou com a mensageria e o que continua sendo um problema?
+
+No Sprint 1, a comunicação entre as agências era feita por uma chamada REST direta e síncrona. Se a agência de destino estivesse fora do ar, a chamada falhava imediatamente depois que o valor já havia sido debitado da conta de origem.
+
+Na Sprint 2, a transferência utiliza RabbitMQ. A agência de origem não precisa mais que a agência de destino esteja disponível naquele instante. A mensagem pode permanecer armazenada na fila e ser consumida quando a agência voltar.
+
+Isso melhora o desacoplamento e a resiliência da comunicação, pois a indisponibilidade temporária do consumidor não faz a mensagem desaparecer.
+
+Porém, isso não garante que toda a operação bancária esteja correta. As contas ainda vivem apenas em memória. Assim, caso a agência seja reiniciada, os dados das contas são perdidos e uma mensagem preservada pelo RabbitMQ pode chegar sem existir mais uma conta onde aplicar o crédito.
+
+Portanto, "a mensagem não se perdeu" não significa necessariamente que "a transferência foi concluída corretamente".
+
+### 3. O consumidor RabbitMQ processa créditos sem verificar JWT. Isso é um problema de segurança?
+
+O consumidor RabbitMQ não utiliza JWT porque ele não recebe uma requisição HTTP feita pelo frontend. Ele processa mensagens internas publicadas no broker pelas próprias agências do sistema.
+
+No ambiente atual, isso é aceitável desde que somente componentes autorizados tenham acesso às credenciais do RabbitMQ. Quem possui acesso válido ao broker pode, em princípio, publicar mensagens na exchange e tentar simular operações internas.
+
+Por isso, a segurança dessa comunicação depende do controle das credenciais e permissões do RabbitMQ. Em um sistema real, seria importante restringir quais aplicações podem publicar e consumir determinadas filas ou exchanges e proteger adequadamente as credenciais.
+
+O JWT continua sendo necessário para proteger as requisições HTTP feitas pelos usuários ao backend, enquanto o RabbitMQ utiliza seu próprio mecanismo de autenticação e autorização para a comunicação interna.

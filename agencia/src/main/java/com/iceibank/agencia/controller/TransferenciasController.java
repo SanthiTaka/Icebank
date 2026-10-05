@@ -1,7 +1,6 @@
 package com.iceibank.agencia.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,11 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import com.iceibank.agencia.config.AgenciaConfig;
 import com.iceibank.agencia.model.Conta;
+import com.iceibank.agencia.model.MensagemCredito;
 import com.iceibank.agencia.services.ContasService;
+import com.iceibank.agencia.services.MensageriaService;
 import com.iceibank.agencia.services.RegistroEventos;
 import com.iceibank.agencia.services.RelogioVetorial;
 
@@ -26,7 +26,7 @@ public class TransferenciasController {
     private final ContasService contasService;
     private final RelogioVetorial relogioVetorial;
     private final RegistroEventos registroEventos;
-    private final RestTemplate restTemplate;
+    private final MensageriaService mensageriaService;
 
     private final int porta;
 
@@ -34,13 +34,14 @@ public class TransferenciasController {
             ContasService contasService,
             RelogioVetorial relogioVetorial,
             RegistroEventos registroEventos,
+            MensageriaService mensageriaService,
             @Value("${server.port:4093}") int porta
     ) {
         this.contasService = contasService;
         this.relogioVetorial = relogioVetorial;
         this.registroEventos = registroEventos;
+        this.mensageriaService = mensageriaService;
         this.porta = porta;
-        this.restTemplate = new RestTemplate();
     }
 
     @PostMapping
@@ -48,9 +49,17 @@ public class TransferenciasController {
             @RequestBody Map<String, Object> dados
     ) throws IOException {
 
-        Long origem = ((Number) dados.get("idOrigem")).longValue();
-        Long destino = ((Number) dados.get("idDestino")).longValue();
-        double valor = ((Number) dados.get("valor")).doubleValue();
+        Long origem =
+                ((Number) dados.get("idOrigem"))
+                        .longValue();
+
+        Long destino =
+                ((Number) dados.get("idDestino"))
+                        .longValue();
+
+        double valor =
+                ((Number) dados.get("valor"))
+                        .doubleValue();
 
         if (valor <= 0) {
             return ResponseEntity.badRequest().body(
@@ -71,10 +80,14 @@ public class TransferenciasController {
         }
 
         int agenciaOrigem =
-                AgenciaConfig.agenciaResponsavel(origem.intValue());
+                AgenciaConfig.agenciaResponsavel(
+                        origem.intValue()
+                );
 
         int agenciaDestino =
-                AgenciaConfig.agenciaResponsavel(destino.intValue());
+                AgenciaConfig.agenciaResponsavel(
+                        destino.intValue()
+                );
 
         int agenciaAtual =
                 porta - AgenciaConfig.PORTA_BASE;
@@ -111,11 +124,11 @@ public class TransferenciasController {
             );
         }
 
-        // =========================================================
+        // =====================================================
         // TRANSFERÊNCIA LOCAL
-        // =========================================================
+        // =====================================================
 
-        if (agenciaOrigem == agenciaDestino) {
+        if (agenciaDestino == agenciaAtual) {
 
             Conta contaDestino =
                     contasService.buscar(destino);
@@ -131,104 +144,110 @@ public class TransferenciasController {
                         );
             }
 
-            int[] timestampVetorial =
+            int[] vetorDebito =
                     relogioVetorial.eventoLocal();
 
             contaOrigem.setSaldo(
                     contaOrigem.getSaldo() - valor
             );
 
+            registroEventos.registrar(
+                    "TRANSFERENCIA_DEBITO",
+                    vetorDebito,
+                    Map.of(
+                            "idOrigem", origem,
+                            "idDestino", destino,
+                            "valor", valor,
+                            "saldoOrigem",
+                            contaOrigem.getSaldo()
+                    )
+            );
+
+            int[] vetorCredito =
+                    relogioVetorial.eventoLocal();
+
             contaDestino.setSaldo(
                     contaDestino.getSaldo() + valor
             );
 
             registroEventos.registrar(
-                    "TRANSFERENCIA_LOCAL",
-                    timestampVetorial,
+                    "TRANSFERENCIA_CREDITO",
+                    vetorCredito,
                     Map.of(
-                            "origem", origem,
-                            "destino", destino,
+                            "idOrigem", origem,
+                            "idDestino", destino,
                             "valor", valor,
-                            "saldoOrigem", contaOrigem.getSaldo(),
-                            "saldoDestino", contaDestino.getSaldo()
+                            "saldoDestino",
+                            contaDestino.getSaldo()
                     )
             );
 
             return ResponseEntity.ok(
                     Map.of(
                             "mensagem",
-                            "Transferência realizada com sucesso",
-                            "origem",
-                            contaOrigem,
-                            "destino",
-                            contaDestino,
-                            "timestampVetorial",
-                            timestampVetorial
+                            "Transferência concluída (mesma agência)."
                     )
             );
         }
 
-        // =========================================================
+        // =====================================================
         // TRANSFERÊNCIA ENTRE AGÊNCIAS
-        // =========================================================
+        // =====================================================
 
-        int[] vetorEnvio =
-                relogioVetorial.aoEnviar();
+        int[] vetorDebito =
+                relogioVetorial.eventoLocal();
 
-        // Por enquanto continuamos com a mesma lógica da Sprint 1.
-        // O RabbitMQ será introduzido na Parte C.
         contaOrigem.setSaldo(
                 contaOrigem.getSaldo() - valor
         );
 
         registroEventos.registrar(
-                "TRANSFERENCIA_INTERAGENCIA_ENVIO",
-                vetorEnvio,
-                Map.of(
-                        "origem", origem,
-                        "destino", destino,
-                        "valor", valor,
-                        "agenciaDestino", agenciaDestino,
-                        "saldoOrigem", contaOrigem.getSaldo()
-                )
-        );
-
-        int portaDestino =
-                AgenciaConfig.PORTA_BASE + agenciaDestino;
-
-        String urlDestino =
-                "http://localhost:"
-                + portaDestino
-                + "/transferencias/receber";
-
-        Map<String, Object> requisicao =
+                "TRANSFERENCIA_DEBITO",
+                vetorDebito,
                 Map.of(
                         "idOrigem", origem,
                         "idDestino", destino,
                         "valor", valor,
-                        "vetorEnvio", vetorEnvio
+                        "agenciaDestino", agenciaDestino,
+                        "saldoOrigem",
+                        contaOrigem.getSaldo()
+                )
+        );
+
+        int[] vetorEnvio =
+                relogioVetorial.aoEnviar();
+
+        MensagemCredito mensagem =
+                new MensagemCredito(
+                        destino,
+                        valor,
+                        vetorEnvio,
+                        agenciaAtual
                 );
 
         try {
 
-            restTemplate.postForEntity(
-                    urlDestino,
-                    requisicao,
-                    Map.class
+            mensageriaService.publicarCredito(
+                    agenciaDestino,
+                    mensagem
+            );
+
+            registroEventos.registrar(
+                    "TRANSFERENCIA_PUBLICADA",
+                    vetorEnvio,
+                    Map.of(
+                            "idOrigem", origem,
+                            "idDestino", destino,
+                            "valor", valor,
+                            "agenciaDestino",
+                            agenciaDestino
+                    )
             );
 
             return ResponseEntity.ok(
                     Map.of(
                             "mensagem",
-                            "Transferência entre agências realizada com sucesso",
-                            "origem",
-                            origem,
-                            "destino",
-                            destino,
-                            "valor",
-                            valor,
-                            "timestampVetorial",
-                            vetorEnvio
+                            "Transferência publicada para a agência de destino (entrega assíncrona)."
                     )
             );
 
@@ -238,15 +257,15 @@ public class TransferenciasController {
                     relogioVetorial.eventoLocal();
 
             registroEventos.registrar(
-                    "TRANSFERENCIA_INTERAGENCIA_FALHA",
+                    "PUBLICACAO_RABBITMQ_FALHOU",
                     vetorFalha,
                     Map.of(
-                            "origem", origem,
-                            "destino", destino,
+                            "idOrigem", origem,
+                            "idDestino", destino,
                             "valor", valor,
                             "erro",
                             e.getMessage() == null
-                                    ? "Falha na comunicação"
+                                    ? "Erro ao publicar mensagem"
                                     : e.getMessage()
                     )
             );
@@ -256,99 +275,9 @@ public class TransferenciasController {
                     .body(
                             Map.of(
                                     "erro",
-                                    "Falha na comunicação com a agência destino"
+                                    "Falha ao publicar transferência no RabbitMQ"
                             )
                     );
         }
-    }
-
-    @PostMapping("/receber")
-    public ResponseEntity<?> receberTransferencia(
-            @RequestBody Map<String, Object> dados
-    ) throws IOException {
-
-        Long origem =
-                ((Number) dados.get("idOrigem")).longValue();
-
-        Long destino =
-                ((Number) dados.get("idDestino")).longValue();
-
-        double valor =
-                ((Number) dados.get("valor")).doubleValue();
-
-        int[] vetorRecebido =
-                converterVetor(
-                        dados.get("vetorEnvio")
-                );
-
-        Conta contaDestino =
-                contasService.buscar(destino);
-
-        if (contaDestino == null) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(
-                            Map.of(
-                                    "erro",
-                                    "Conta de destino não encontrada"
-                            )
-                    );
-        }
-
-        int[] timestampVetorial =
-                relogioVetorial.aoReceber(
-                        vetorRecebido
-                );
-
-        contaDestino.setSaldo(
-                contaDestino.getSaldo() + valor
-        );
-
-        registroEventos.registrar(
-                "TRANSFERENCIA_INTERAGENCIA_RECEBIMENTO",
-                timestampVetorial,
-                Map.of(
-                        "origem", origem,
-                        "destino", destino,
-                        "valor", valor,
-                        "vetorRecebido", vetorRecebido,
-                        "saldoDestino", contaDestino.getSaldo()
-                )
-        );
-
-        return ResponseEntity.ok(
-                Map.of(
-                        "mensagem",
-                        "Transferência recebida com sucesso",
-                        "destino",
-                        contaDestino,
-                        "timestampVetorial",
-                        timestampVetorial
-                )
-        );
-    }
-
-    private int[] converterVetor(Object objeto) {
-
-        if (objeto instanceof List<?> lista) {
-
-            int[] vetor =
-                    new int[lista.size()];
-
-            for (int i = 0; i < lista.size(); i++) {
-                vetor[i] =
-                        ((Number) lista.get(i)).intValue();
-            }
-
-            return vetor;
-        }
-
-        if (objeto instanceof int[] vetor) {
-            return vetor.clone();
-        }
-
-        throw new IllegalArgumentException(
-                "Vetor recebido em formato inválido"
-        );
     }
 }
