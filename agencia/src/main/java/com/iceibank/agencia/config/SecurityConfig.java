@@ -53,11 +53,14 @@ public class SecurityConfig {
                 )
                 )
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                )
+    .requestMatchers(
+        "/auth/login",
+        "/bully/**"
+    ).permitAll()
+    .anyRequest()
+    .authenticated()
+)
+                
                 .oauth2ResourceServer(oauth2
                         -> oauth2.jwt(jwt -> {
                 })
