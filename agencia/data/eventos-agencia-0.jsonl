@@ -3,3 +3,5 @@
 {"agencia":"agencia-0","tipo":"TRANSFERENCIA_PUBLICADA","timestampVetorial":[3,0,0],"horaParede":"2026-10-05T22:04:18.773845600Z","detalhes":{"agenciaDestino":1,"idOrigem":0,"idDestino":1,"valor":30.0}}
 {"agencia":"agencia-0","tipo":"CONFIRMACAO_CREDITO_RECEBIDA","timestampVetorial":[4,3,0],"horaParede":"2026-10-05T22:04:18.845344200Z","detalhes":{"idConta":1,"valor":30.0,"agenciaDestino":1}}
 {"agencia":"agencia-0","tipo":"DEPOSITO","timestampVetorial":[6,3,0],"horaParede":"2026-10-05T22:09:09.396310100Z","detalhes":{"idConta":0,"saldoAtual":71.0,"valor":1.0}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-16T02:48:26.913153200Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-16T02:48:27.023999500Z","detalhes":{"idAgencia":0}}
