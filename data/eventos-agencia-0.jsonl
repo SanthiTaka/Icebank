@@ -11,3 +11,5 @@
 {"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-16T02:43:35.867263300Z","detalhes":{"idAgencia":0}}
 {"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-16T02:44:10.787780700Z","detalhes":{"idAgencia":0}}
 {"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-16T02:44:10.915449200Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-17T22:20:15.111863400Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-17T22:20:15.207863600Z","detalhes":{"idAgencia":0}}

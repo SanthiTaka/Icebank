@@ -47,16 +47,12 @@ public class ContasController {
             return ResponseEntity.badRequest().build();
         }
 
-        int[] timestampVetorial =
-                relogioVetorial.eventoLocal();
+        int[] timestampVetorial = relogioVetorial.eventoLocal();
 
-        Conta contaCriada =
-                contasService.criar(conta);
+        Conta contaCriada = contasService.criar(conta);
 
-        registroEventos.registrar(
-                "CRIAR_CONTA",
-                timestampVetorial,
-                Map.of(
+        registroEventos.registrar("CRIAR_CONTA",timestampVetorial,
+                        Map.of(
                         "idConta", contaCriada.getId(),
                         "titular", contaCriada.getTitular(),
                         "saldo", contaCriada.getSaldo()

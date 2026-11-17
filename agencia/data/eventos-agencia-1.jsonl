@@ -1,3 +1,16 @@
 {"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampVetorial":[0,1,0],"horaParede":"2026-10-05T22:04:11.407675600Z","detalhes":{"saldo":50.0,"titular":"Bruno","idConta":1}}
 {"agencia":"agencia-1","tipo":"TRANSFERENCIA_CREDITO_REMOTO","timestampVetorial":[3,2,0],"horaParede":"2026-10-05T22:04:18.799358700Z","detalhes":{"valor":30.0,"idConta":1,"origemAgencia":0,"saldoAtual":80.0}}
 {"agencia":"agencia-1","tipo":"CONFIRMACAO_CREDITO_PUBLICADA","timestampVetorial":[3,3,0],"horaParede":"2026-10-05T22:04:18.822720800Z","detalhes":{"valor":30.0,"idConta":1,"agenciaDestino":1,"agenciaOrigem":0}}
+{"agencia":"agencia-1","tipo":"ELEICAO_INICIADA","timestampVetorial":[0,1,0],"horaParede":"2026-11-17T22:30:51.883751200Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"TORNOU_LIDER","timestampVetorial":[0,3,0],"horaParede":"2026-11-17T22:30:51.959990200Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"LIDER_ANUNCIADO","timestampVetorial":[0,6,4],"horaParede":"2026-11-17T22:31:05.881090700Z","detalhes":{"agencia":1,"liderId":2}}
+{"agencia":"agencia-1","tipo":"ELEICAO_INICIADA","timestampVetorial":[0,1,0],"horaParede":"2026-11-17T22:42:46.076592900Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"TORNOU_LIDER","timestampVetorial":[0,3,0],"horaParede":"2026-11-17T22:42:46.152588900Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"LIDER_ANUNCIADO","timestampVetorial":[0,6,4],"horaParede":"2026-11-17T22:43:04.075882200Z","detalhes":{"liderId":2,"agencia":1}}
+{"agencia":"agencia-1","tipo":"ELEICAO_INICIADA","timestampVetorial":[0,1,0],"horaParede":"2026-11-17T22:48:11.102114600Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"TORNOU_LIDER","timestampVetorial":[0,3,0],"horaParede":"2026-11-17T22:48:11.188457400Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"LIDER_ANUNCIADO","timestampVetorial":[0,6,4],"horaParede":"2026-11-17T22:48:23.645209Z","detalhes":{"agencia":1,"liderId":2}}
+{"agencia":"agencia-1","tipo":"ELEICAO_INICIADA","timestampVetorial":[0,1,0],"horaParede":"2026-11-17T22:59:02.705197500Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"TORNOU_LIDER","timestampVetorial":[0,3,0],"horaParede":"2026-11-17T22:59:02.781785Z","detalhes":{"idAgencia":1}}
+{"agencia":"agencia-1","tipo":"LIDER_ANUNCIADO","timestampVetorial":[0,6,4],"horaParede":"2026-11-17T22:59:16.383326400Z","detalhes":{"liderId":2,"agencia":1}}
+{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampVetorial":[0,7,4],"horaParede":"2026-11-17T23:06:37.895173200Z","detalhes":{"saldo":100.0,"idConta":1,"titular":"Luiz"}}

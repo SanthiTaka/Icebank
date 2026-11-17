@@ -5,3 +5,41 @@
 {"agencia":"agencia-0","tipo":"DEPOSITO","timestampVetorial":[6,3,0],"horaParede":"2026-10-05T22:09:09.396310100Z","detalhes":{"idConta":0,"saldoAtual":71.0,"valor":1.0}}
 {"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-16T02:48:26.913153200Z","detalhes":{"idAgencia":0}}
 {"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-16T02:48:27.023999500Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-17T22:25:23.903974100Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-17T22:25:23.982469900Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[7,0,3],"horaParede":"2026-11-17T22:26:55.464589700Z","detalhes":{"liderId":2,"agencia":0}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-17T22:29:52.252800800Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-17T22:29:52.323833300Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[7,4,0],"horaParede":"2026-11-17T22:30:52.057003400Z","detalhes":{"liderId":1,"agencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[8,4,3],"horaParede":"2026-11-17T22:31:05.774107300Z","detalhes":{"liderId":2,"agencia":0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[9,4,3],"horaParede":"2026-11-17T22:39:47.085855600Z","detalhes":{"saldo":100.0,"idConta":0,"titular":"Ana"}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-17T22:42:28.365013900Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-17T22:42:28.437617200Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[7,4,0],"horaParede":"2026-11-17T22:42:46.253591500Z","detalhes":{"liderId":1,"agencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[8,4,3],"horaParede":"2026-11-17T22:43:03.968606900Z","detalhes":{"liderId":2,"agencia":0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[9,4,3],"horaParede":"2026-11-17T22:43:31.924001800Z","detalhes":{"saldo":100.0,"titular":"Ana","idConta":0}}
+{"agencia":"agencia-0","tipo":"DEPOSITO","timestampVetorial":[11,4,3],"horaParede":"2026-11-17T22:43:50.985237600Z","detalhes":{"valor":25.0,"saldoAtual":125.0,"idConta":0}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-17T22:47:59.322630500Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-17T22:47:59.400053500Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[7,4,0],"horaParede":"2026-11-17T22:48:11.285891200Z","detalhes":{"liderId":1,"agencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[8,4,3],"horaParede":"2026-11-17T22:48:23.531172Z","detalhes":{"liderId":2,"agencia":0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[9,4,3],"horaParede":"2026-11-17T22:48:42.207629600Z","detalhes":{"titular":"Ana","saldo":100.0,"idConta":0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[11,4,3],"horaParede":"2026-11-17T22:49:50.840060500Z","detalhes":{"titular":"Luiz","saldo":100.0,"idConta":3}}
+{"agencia":"agencia-0","tipo":"TRANSFERENCIA_DEBITO","timestampVetorial":[12,4,3],"horaParede":"2026-11-17T22:51:21.040029600Z","detalhes":{"idOrigem":0,"saldoOrigem":70.0,"idDestino":1,"valor":30.0,"agenciaDestino":1}}
+{"agencia":"agencia-0","tipo":"PUBLICACAO_RABBITMQ_FALHOU","timestampVetorial":[14,4,3],"horaParede":"2026-11-17T22:51:21.045033200Z","detalhes":{"erro":"java.net.UnknownHostException: ${RABBITMQ_URL}","idOrigem":0,"idDestino":1,"valor":30.0}}
+{"agencia":"agencia-0","tipo":"TRANSFERENCIA_DEBITO","timestampVetorial":[15,4,3],"horaParede":"2026-11-17T22:55:25.397820900Z","detalhes":{"saldoOrigem":40.0,"idOrigem":0,"idDestino":3,"valor":30.0}}
+{"agencia":"agencia-0","tipo":"TRANSFERENCIA_CREDITO","timestampVetorial":[16,4,3],"horaParede":"2026-11-17T22:55:25.398815900Z","detalhes":{"idOrigem":0,"idDestino":3,"valor":30.0,"saldoDestino":130.0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[17,4,3],"horaParede":"2026-11-17T22:56:12.802033900Z","detalhes":{"titular":"Ana","saldo":100.0,"idConta":6}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[18,4,3],"horaParede":"2026-11-17T22:56:38.340357800Z","detalhes":{"titular":"Luiz","saldo":100.0,"idConta":9}}
+{"agencia":"agencia-0","tipo":"TRANSFERENCIA_DEBITO","timestampVetorial":[19,4,3],"horaParede":"2026-11-17T22:56:59.010439800Z","detalhes":{"idOrigem":0,"saldoOrigem":10.0,"idDestino":1,"valor":30.0,"agenciaDestino":1}}
+{"agencia":"agencia-0","tipo":"PUBLICACAO_RABBITMQ_FALHOU","timestampVetorial":[21,4,3],"horaParede":"2026-11-17T22:56:59.011433100Z","detalhes":{"erro":"java.net.UnknownHostException: ${RABBITMQ_URL}","idOrigem":0,"idDestino":1,"valor":30.0}}
+{"agencia":"agencia-0","tipo":"ELEICAO_INICIADA","timestampVetorial":[1,0,0],"horaParede":"2026-11-17T22:58:48.858648100Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"TORNOU_LIDER","timestampVetorial":[4,0,0],"horaParede":"2026-11-17T22:58:48.936646700Z","detalhes":{"idAgencia":0}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[7,4,0],"horaParede":"2026-11-17T22:59:02.898778100Z","detalhes":{"agencia":0,"liderId":1}}
+{"agencia":"agencia-0","tipo":"LIDER_ANUNCIADO","timestampVetorial":[8,4,3],"horaParede":"2026-11-17T22:59:16.265320700Z","detalhes":{"agencia":0,"liderId":2}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[9,4,3],"horaParede":"2026-11-17T22:59:54.270148200Z","detalhes":{"titular":"Ana","idConta":0,"saldo":100.0}}
+{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[10,4,3],"horaParede":"2026-11-17T23:01:00.822774300Z","detalhes":{"titular":"Luiz","idConta":3,"saldo":100.0}}
+{"agencia":"agencia-0","tipo":"TRANSFERENCIA_DEBITO","timestampVetorial":[11,4,3],"horaParede":"2026-11-17T23:02:29.647860100Z","detalhes":{"saldoOrigem":70.0,"idOrigem":0,"agenciaDestino":1,"valor":30.0,"idDestino":1}}
+{"agencia":"agencia-0","tipo":"PUBLICACAO_RABBITMQ_FALHOU","timestampVetorial":[13,4,3],"horaParede":"2026-11-17T23:02:29.652870300Z","detalhes":{"erro":"java.net.UnknownHostException: ${RABBITMQ_URL}","valor":30.0,"idDestino":1,"idOrigem":0}}
+{"agencia":"agencia-0","tipo":"TRANSFERENCIA_DEBITO","timestampVetorial":[14,4,3],"horaParede":"2026-11-17T23:09:00.063306500Z","detalhes":{"saldoOrigem":40.0,"idOrigem":0,"agenciaDestino":1,"valor":30.0,"idDestino":1}}
+{"agencia":"agencia-0","tipo":"PUBLICACAO_RABBITMQ_FALHOU","timestampVetorial":[16,4,3],"horaParede":"2026-11-17T23:09:00.066307300Z","detalhes":{"erro":"java.net.UnknownHostException: ${RABBITMQ_URL}","valor":30.0,"idDestino":1,"idOrigem":0}}
