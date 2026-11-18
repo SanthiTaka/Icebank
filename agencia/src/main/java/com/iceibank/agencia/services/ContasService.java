@@ -16,15 +16,29 @@ public class ContasService {
 
     private final Map<Long, Conta> contas = new ConcurrentHashMap<>();
     private final AtomicLong proximoId;
+    private final int idAgencia;
 
     public ContasService(@Value("${server.port:4093}") int porta) {
-        int agencia = porta - 4093;
-        this.proximoId = new AtomicLong(agencia);
+        this.idAgencia = porta - 4093;
+        this.proximoId = new AtomicLong(idAgencia);
     }
 
     public Conta criar(Conta conta) {
-        Long id = proximoId.getAndAdd(3);
-        conta.setId(id);
+        Long id = conta.getId();
+        if (id != null) {
+            if (id % 3 != idAgencia) {
+                throw new IllegalArgumentException("Conta " + id + " não pertence a esta agência.");
+            }
+            if (contas.containsKey(id)) {
+                throw new IllegalStateException("Conta já existe.");
+            }
+        } else {
+            id = proximoId.getAndAdd(3);
+            while (contas.containsKey(id)) {
+                id = proximoId.getAndAdd(3);
+            }
+            conta.setId(id);
+        }
         contas.put(id, conta);
         return conta;
     }
@@ -39,14 +53,11 @@ public class ContasService {
 
     public Conta atualizar(Long id, Conta dados) {
         Conta conta = contas.get(id);
-
         if (conta == null) {
             return null;
         }
-
         conta.setTitular(dados.getTitular());
         conta.setSaldo(dados.getSaldo());
-
         return conta;
     }
 
@@ -56,23 +67,23 @@ public class ContasService {
 
     public synchronized Conta depositar(Long id, double valor) {
         Conta conta = contas.get(id);
-
         if (conta == null) {
             return null;
         }
-
         conta.setSaldo(conta.getSaldo() + valor);
         return conta;
     }
 
     public synchronized Conta sacar(Long id, double valor) {
         Conta conta = contas.get(id);
-
         if (conta == null || conta.getSaldo() < valor) {
             return null;
         }
-
         conta.setSaldo(conta.getSaldo() - valor);
         return conta;
+    }
+
+    public int getIdAgencia() {
+        return idAgencia;
     }
 }

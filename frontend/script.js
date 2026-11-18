@@ -115,18 +115,14 @@ loginForm.addEventListener("submit", async (event) => {
         loginMensagem,
         dados?.erro || "Usuário ou senha inválidos.",
       );
-
       return;
     }
 
     localStorage.setItem(TOKEN_KEY, dados.token);
-
     mostrarMensagem(loginMensagem, "Login realizado com sucesso.", true);
-
     mostrarBanco();
   } catch (erro) {
     mostrarMensagem(loginMensagem, "Não foi possível conectar à agência.");
-
     console.error(erro);
   }
 });
@@ -137,8 +133,49 @@ logoutButton.addEventListener("click", () => {
   loginMensagem.textContent = "";
 });
 
-const consultaButton = document.getElementById("consulta-button");
+// CRIAR CONTA
+const criarContaButton = document.getElementById("criar-conta-button");
+const criarContaResultado = document.getElementById("criar-conta-resultado");
 
+criarContaButton.addEventListener("click", async () => {
+  const titular = document.getElementById("criar-titular").value.trim();
+  const saldo = Number(document.getElementById("criar-saldo").value);
+
+  if (!titular) {
+    mostrarMensagem(criarContaResultado, "Informe o nome do titular.");
+    return;
+  }
+
+  if (isNaN(saldo) || saldo < 0) {
+    mostrarMensagem(criarContaResultado, "Informe um saldo inicial válido.");
+    return;
+  }
+
+  try {
+    const conta = await fazerRequisicao(`${obterUrlBase()}/contas`, {
+      method: "POST",
+      body: JSON.stringify({
+        titular: titular,
+        saldo: saldo,
+      }),
+    });
+
+    criarContaResultado.innerHTML = `
+      <strong>Conta criada com sucesso!</strong><br>
+      ID: ${conta.id}<br>
+      Titular: ${conta.titular}<br>
+      Saldo inicial: R$ ${Number(conta.saldo).toFixed(2)}
+    `;
+    criarContaResultado.style.color = "green";
+    document.getElementById("criar-titular").value = "";
+    document.getElementById("criar-saldo").value = "";
+  } catch (erro) {
+    mostrarMensagem(criarContaResultado, erro.message);
+  }
+});
+
+// CONSULTAR CONTA
+const consultaButton = document.getElementById("consulta-button");
 const contaResultado = document.getElementById("conta-resultado");
 
 consultaButton.addEventListener("click", async () => {
@@ -146,7 +183,6 @@ consultaButton.addEventListener("click", async () => {
 
   if (!id) {
     mostrarMensagem(contaResultado, "Informe o ID da conta.");
-
     return;
   }
 
@@ -156,91 +192,130 @@ consultaButton.addEventListener("click", async () => {
     });
 
     contaResultado.innerHTML = `
-            <strong>Conta encontrada</strong><br>
-            ID: ${conta.id}<br>
-            Titular: ${conta.titular}<br>
-            Saldo: R$ ${Number(conta.saldo).toFixed(2)}
-        `;
-
+      <strong>Conta encontrada</strong><br>
+      ID: ${conta.id}<br>
+      Titular: ${conta.titular}<br>
+      Saldo: R$ ${Number(conta.saldo).toFixed(2)}
+    `;
     contaResultado.style.color = "green";
   } catch (erro) {
     mostrarMensagem(contaResultado, erro.message);
   }
 });
 
+// EXTRATO (Funcionalidade Adicional)
+const extratoButton = document.getElementById("extrato-button");
+const extratoResultado = document.getElementById("extrato-resultado");
+
+extratoButton.addEventListener("click", async () => {
+  const id = document.getElementById("extrato-id").value;
+
+  if (!id) {
+    mostrarMensagem(extratoResultado, "Informe o ID da conta.");
+    return;
+  }
+
+  try {
+    const dados = await fazerRequisicao(`${obterUrlBase()}/contas/${id}/extrato`, {
+      method: "GET",
+    });
+
+    let html = `
+      <strong>Extrato da Conta ${dados.idConta} (${dados.titular})</strong><br>
+      Saldo Atual: R$ ${Number(dados.saldoAtual).toFixed(2)} | Relógio Lamport: ${dados.timestampLamport}<br>
+      <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
+        <thead>
+          <tr style="background-color: #f0f0f0; text-align: left;">
+            <th style="padding: 4px; border: 1px solid #ccc;">Lamport</th>
+            <th style="padding: 4px; border: 1px solid #ccc;">Tipo</th>
+            <th style="padding: 4px; border: 1px solid #ccc;">Valor</th>
+            <th style="padding: 4px; border: 1px solid #ccc;">Saldo Após</th>
+            <th style="padding: 4px; border: 1px solid #ccc;">Data/Hora</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    if (dados.transacoes && dados.transacoes.length > 0) {
+      for (const t of dados.transacoes) {
+        html += `
+          <tr>
+            <td style="padding: 4px; border: 1px solid #ccc;">${t.timestampLamport}</td>
+            <td style="padding: 4px; border: 1px solid #ccc;">${t.tipo}</td>
+            <td style="padding: 4px; border: 1px solid #ccc;">R$ ${Number(t.valor).toFixed(2)}</td>
+            <td style="padding: 4px; border: 1px solid #ccc;">R$ ${Number(t.saldoApos).toFixed(2)}</td>
+            <td style="padding: 4px; border: 1px solid #ccc;">${new Date(t.dataHora).toLocaleTimeString()}</td>
+          </tr>
+        `;
+      }
+    } else {
+      html += `<tr><td colspan="5" style="padding: 4px; border: 1px solid #ccc; text-align: center;">Nenhuma transação registrada.</td></tr>`;
+    }
+
+    html += `</tbody></table>`;
+    extratoResultado.innerHTML = html;
+    extratoResultado.style.color = "black";
+  } catch (erro) {
+    mostrarMensagem(extratoResultado, erro.message);
+  }
+});
+
+// DEPÓSITO
 const depositoButton = document.getElementById("deposito-button");
 const depositoResultado = document.getElementById("deposito-resultado");
 
 depositoButton.addEventListener("click", async (event) => {
   event.preventDefault();
-  event.stopImmediatePropagation();
 
   const id = document.getElementById("deposito-id").value;
   const valor = Number(document.getElementById("deposito-valor").value);
 
-  depositoResultado.textContent = "";
-
   if (!id) {
-    depositoResultado.textContent = "Informe o ID da conta.";
-    depositoResultado.style.color = "red";
+    mostrarMensagem(depositoResultado, "Informe o ID da conta.");
     return;
   }
 
   if (!valor || valor <= 0) {
-    depositoResultado.textContent = "Informe um valor de depósito válido.";
-    depositoResultado.style.color = "red";
+    mostrarMensagem(depositoResultado, "Informe um valor de depósito válido.");
     return;
   }
-
-  depositoResultado.textContent = "Processando...";
-  depositoResultado.style.color = "black";
 
   try {
     const conta = await fazerRequisicao(
       `${obterUrlBase()}/contas/${id}/deposito`,
       {
         method: "POST",
-        body: JSON.stringify({
-          valor: valor,
-        }),
+        body: JSON.stringify({ valor }),
       },
     );
 
-    console.log("RESPOSTA DO DEPÓSITO:", conta);
-
-    depositoResultado.textContent =
-      `Depósito realizado com sucesso! ` +
-      `Conta: ${conta.id} | ` +
-      `Novo saldo: R$ ${Number(conta.saldo).toFixed(2)}`;
-
+    depositoResultado.innerHTML = `
+      <strong>Depósito realizado com sucesso!</strong><br>
+      Conta: ${conta.id}<br>
+      Novo saldo: R$ ${Number(conta.saldo).toFixed(2)}
+    `;
     depositoResultado.style.color = "green";
+    document.getElementById("deposito-valor").value = "";
   } catch (erro) {
-    console.error("ERRO NO DEPÓSITO:", erro);
-
-    depositoResultado.textContent = erro.message;
-
-    depositoResultado.style.color = "red";
+    mostrarMensagem(depositoResultado, erro.message);
   }
 });
 
+// SAQUE
 const saqueButton = document.getElementById("saque-button");
-
 const saqueResultado = document.getElementById("saque-resultado");
 
 saqueButton.addEventListener("click", async () => {
   const id = document.getElementById("saque-id").value;
-
   const valor = Number(document.getElementById("saque-valor").value);
 
   if (!id) {
     mostrarMensagem(saqueResultado, "Informe o ID da conta.");
-
     return;
   }
 
   if (!valor || valor <= 0) {
     mostrarMensagem(saqueResultado, "Informe um valor de saque válido.");
-
     return;
   }
 
@@ -249,72 +324,43 @@ saqueButton.addEventListener("click", async () => {
       `${obterUrlBase()}/contas/${id}/saque`,
       {
         method: "POST",
-        body: JSON.stringify({
-          valor: valor,
-        }),
+        body: JSON.stringify({ valor }),
       },
     );
 
     saqueResultado.innerHTML = `
-            <strong>Saque realizado com sucesso!</strong><br>
-            Conta: ${conta.id}<br>
-            Novo saldo: R$ ${Number(conta.saldo).toFixed(2)}
-        `;
-
+      <strong>Saque realizado com sucesso!</strong><br>
+      Conta: ${conta.id}<br>
+      Novo saldo: R$ ${Number(conta.saldo).toFixed(2)}
+    `;
     saqueResultado.style.color = "green";
-
-    document.getElementById("saque-id").value = "";
     document.getElementById("saque-valor").value = "";
   } catch (erro) {
-    if (erro.message.includes("Código HTTP: 400")) {
-      mostrarMensagem(saqueResultado, "Saldo insuficiente ou valor inválido.");
-    } else {
-      mostrarMensagem(saqueResultado, erro.message);
-    }
+    mostrarMensagem(saqueResultado, erro.message);
   }
 });
 
+// TRANSFERÊNCIA
 const transferenciaButton = document.getElementById("transferencia-button");
-
-const transferenciaResultado = document.getElementById(
-  "transferencia-resultado",
-);
+const transferenciaResultado = document.getElementById("transferencia-resultado");
 
 transferenciaButton.addEventListener("click", async () => {
-  const idOrigem = Number(
-    document.getElementById("transferencia-origem").value,
-  );
-
-  const idDestino = Number(
-    document.getElementById("transferencia-destino").value,
-  );
-
+  const idOrigem = Number(document.getElementById("transferencia-origem").value);
+  const idDestino = Number(document.getElementById("transferencia-destino").value);
   const valor = Number(document.getElementById("transferencia-valor").value);
 
   if (Number.isNaN(idOrigem) || Number.isNaN(idDestino)) {
-    mostrarMensagem(
-      transferenciaResultado,
-      "Informe as contas de origem e destino.",
-    );
-
+    mostrarMensagem(transferenciaResultado, "Informe as contas de origem e destino.");
     return;
   }
 
   if (idOrigem === idDestino) {
-    mostrarMensagem(
-      transferenciaResultado,
-      "A conta de origem e destino devem ser diferentes.",
-    );
-
+    mostrarMensagem(transferenciaResultado, "A conta de origem e destino devem ser diferentes.");
     return;
   }
 
   if (!valor || valor <= 0) {
-    mostrarMensagem(
-      transferenciaResultado,
-      "Informe um valor de transferência válido.",
-    );
-
+    mostrarMensagem(transferenciaResultado, "Informe um valor de transferência válido.");
     return;
   }
 
@@ -332,18 +378,12 @@ transferenciaButton.addEventListener("click", async () => {
     );
 
     transferenciaResultado.innerHTML = `
-            <strong>${resultado.mensagem}</strong><br>
-            Origem: ${idOrigem}<br>
-            Destino: ${idDestino}<br>
-            Valor: R$ ${valor.toFixed(2)}
-        `;
-
+      <strong>${resultado.mensagem}</strong><br>
+      Origem: ${idOrigem}<br>
+      Destino: ${idDestino}<br>
+      Valor: R$ ${valor.toFixed(2)}
+    `;
     transferenciaResultado.style.color = "green";
-
-    document.getElementById("transferencia-origem").value = "";
-
-    document.getElementById("transferencia-destino").value = "";
-
     document.getElementById("transferencia-valor").value = "";
   } catch (erro) {
     mostrarMensagem(transferenciaResultado, erro.message);
@@ -353,11 +393,3 @@ transferenciaButton.addEventListener("click", async () => {
 if (obterToken()) {
   mostrarBanco();
 }
-
-window.addEventListener("beforeunload", () => {
-  console.log("A PÁGINA ESTÁ SENDO RECARREGADA");
-});
-
-window.addEventListener("beforeunload", () => {
-  console.log("A PÁGINA ESTÁ SENDO RECARREGADA");
-});

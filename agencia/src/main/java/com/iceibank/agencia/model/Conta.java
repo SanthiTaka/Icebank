@@ -1,10 +1,15 @@
 package com.iceibank.agencia.model;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 public class Conta {
 
     private Long id;
     private String titular;
     private double saldo;
+    private final List<Map<String, Object>> transacoes = new CopyOnWriteArrayList<>();
 
     public Conta() {
     }
@@ -37,5 +42,13 @@ public class Conta {
 
     public void setSaldo(double saldo) {
         this.saldo = saldo;
+    }
+
+    public List<Map<String, Object>> getTransacoes() {
+        return transacoes;
+    }
+
+    public void adicionarTransacao(Map<String, Object> transacao) {
+        this.transacoes.add(transacao);
     }
 }
