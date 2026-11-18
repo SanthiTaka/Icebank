@@ -12,6 +12,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.iceibank.agencia.config.AgenciaConfig;
+
 @Component
 public class RegistroEventos {
 
@@ -22,14 +24,17 @@ public class RegistroEventos {
             @Value("${server.port:4093}") int porta
     ) throws IOException {
 
-        int agencia = porta - 4093;
-
+        int agencia = porta - AgenciaConfig.PORTA_BASE;
         this.nomeAgencia = "agencia-" + agencia;
 
-        Path pastaDados = Paths.get("data");
+        Path pastaDados;
+        if (Files.exists(Paths.get("agencia"))) {
+            pastaDados = Paths.get("agencia", "data");
+        } else {
+            pastaDados = Paths.get("data");
+        }
 
         Files.createDirectories(pastaDados);
-
         this.caminhoArquivo = pastaDados.resolve(
                 "eventos-" + nomeAgencia + ".jsonl"
         );

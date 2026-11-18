@@ -16,48 +16,44 @@ public class MesclarLogs {
 
     public static void main(String[] args) throws IOException {
 
-        Path pastaDados = Paths.get("data");
-
-        if (!Files.exists(pastaDados)) {
-            System.out.println("Pasta data não encontrada.");
-            return;
-        }
+        List<Path> pastas = List.of(
+                Paths.get("data"),
+                Paths.get("agencia", "data")
+        );
 
         ObjectMapper objectMapper = new ObjectMapper();
-
         List<Map<String, Object>> todosEventos = new ArrayList<>();
 
-        try (var arquivos = Files.list(pastaDados)) {
-
-            arquivos
-                    .filter(arquivo -> arquivo.toString().endsWith(".jsonl"))
-                    .forEach(arquivo -> {
-
-                        try {
-
-                            List<String> linhas = Files.readAllLines(arquivo);
-
-                            for (String linha : linhas) {
-
-                                if (linha.isBlank()) {
-                                    continue;
+        for (Path pastaDados : pastas) {
+            if (Files.exists(pastaDados)) {
+                try (var arquivos = Files.list(pastaDados)) {
+                    arquivos
+                            .filter(arquivo -> arquivo.toString().endsWith(".jsonl"))
+                            .forEach(arquivo -> {
+                                try {
+                                    List<String> linhas = Files.readAllLines(arquivo);
+                                    for (String linha : linhas) {
+                                        if (linha.isBlank()) {
+                                            continue;
+                                        }
+                                        Map<String, Object> evento =
+                                                objectMapper.readValue(
+                                                        linha,
+                                                        new TypeReference<Map<String, Object>>() {}
+                                                );
+                                        todosEventos.add(evento);
+                                    }
+                                } catch (IOException e) {
+                                    System.out.println("Erro ao ler o arquivo: " + arquivo);
                                 }
+                            });
+                }
+            }
+        }
 
-                                Map<String, Object> evento =
-                                        objectMapper.readValue(
-                                                linha,
-                                                new TypeReference<Map<String, Object>>() {}
-                                        );
-
-                                todosEventos.add(evento);
-                            }
-
-                        } catch (IOException e) {
-                            System.out.println(
-                                    "Erro ao ler o arquivo: " + arquivo
-                            );
-                        }
-                    });
+        if (todosEventos.isEmpty()) {
+            System.out.println("Nenhum evento encontrado nos arquivos .jsonl.");
+            return;
         }
 
         todosEventos.sort(
@@ -71,7 +67,6 @@ public class MesclarLogs {
         );
 
         for (Map<String, Object> evento : todosEventos) {
-
             System.out.println(
                     "[Lamport " +
                     evento.get("timestampLamport") +
