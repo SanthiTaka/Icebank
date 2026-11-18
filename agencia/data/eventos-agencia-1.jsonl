@@ -1,3 +1,0 @@
-{"agencia":"agencia-1","tipo":"CRIAR_CONTA","timestampVetorial":[0,1,0],"horaParede":"2026-10-05T22:04:11.407675600Z","detalhes":{"saldo":50.0,"titular":"Bruno","idConta":1}}
-{"agencia":"agencia-1","tipo":"TRANSFERENCIA_CREDITO_REMOTO","timestampVetorial":[3,2,0],"horaParede":"2026-10-05T22:04:18.799358700Z","detalhes":{"valor":30.0,"idConta":1,"origemAgencia":0,"saldoAtual":80.0}}
-{"agencia":"agencia-1","tipo":"CONFIRMACAO_CREDITO_PUBLICADA","timestampVetorial":[3,3,0],"horaParede":"2026-10-05T22:04:18.822720800Z","detalhes":{"valor":30.0,"idConta":1,"agenciaDestino":1,"agenciaOrigem":0}}

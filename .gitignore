@@ -1,0 +1,15 @@
+# Maven
+target/
+*.class
+
+# Logs gerados em tempo de execução
+agencia/data/*.jsonl
+data/*.jsonl
+*.jsonl
+
+# IDEs e Sistema
+.vscode/
+.idea/
+*.iml
+Thumbs.db
+desktop.ini

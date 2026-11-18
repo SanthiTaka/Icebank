@@ -17,77 +17,48 @@ public class MesclarLogs {
 
     public static void main(String[] args) throws IOException {
 
-        Path pastaDados = Paths.get("data");
-
-        if (!Files.exists(pastaDados)) {
-            System.out.println("Pasta data não encontrada.");
-            return;
-        }
+        List<Path> pastas = List.of(
+                Paths.get("data"),
+                Paths.get("agencia", "data")
+        );
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         List<Map<String, Object>> todosEventos =
                 new ArrayList<>();
 
-        try (var arquivos = Files.list(pastaDados)) {
+        for (Path pastaDados : pastas) {
+            if (!Files.exists(pastaDados)) {
+                continue;
+            }
 
-            arquivos
-                    .filter(
-                            arquivo ->
-                                    arquivo
-                                            .toString()
-                                            .endsWith(".jsonl")
-                    )
-                    .forEach(arquivo -> {
+            try (var arquivos = Files.list(pastaDados)) {
+                arquivos
+                        .filter(arquivo -> arquivo.toString().endsWith(".jsonl"))
+                        .forEach(arquivo -> {
+                            try {
+                                List<String> linhas = Files.readAllLines(arquivo);
+                                for (String linha : linhas) {
+                                    if (linha.isBlank()) {
+                                        continue;
+                                    }
+                                    Map<String, Object> evento =
+                                            objectMapper.readValue(
+                                                    linha,
+                                                    new TypeReference<Map<String, Object>>() {}
+                                            );
 
-                        try {
+                                    if (!evento.containsKey("timestampVetorial")) {
+                                        continue;
+                                    }
 
-                            List<String> linhas =
-                                    Files.readAllLines(
-                                            arquivo
-                                    );
-
-                            for (String linha : linhas) {
-
-                                if (linha.isBlank()) {
-                                    continue;
+                                    todosEventos.add(evento);
                                 }
-
-                                Map<String, Object> evento =
-                                        objectMapper.readValue(
-                                                linha,
-                                                new TypeReference<
-                                                        Map<String, Object>
-                                                >() {}
-                                        );
-
-                                /*
-                                 * Ignora logs antigos da Sprint 1
-                                 * que ainda possuem timestampLamport.
-                                 */
-                                if (!evento.containsKey(
-                                        "timestampVetorial"
-                                )) {
-
-                                    System.out.println(
-                                            "Ignorando evento antigo sem timestampVetorial: "
-                                                    + evento.get("tipo")
-                                    );
-
-                                    continue;
-                                }
-
-                                todosEventos.add(evento);
+                            } catch (IOException e) {
+                                System.out.println("Erro ao ler o arquivo: " + arquivo);
                             }
-
-                        } catch (IOException e) {
-
-                            System.out.println(
-                                    "Erro ao ler o arquivo: "
-                                            + arquivo
-                            );
-                        }
-                    });
+                        });
+            }
         }
 
         if (todosEventos.isEmpty()) {

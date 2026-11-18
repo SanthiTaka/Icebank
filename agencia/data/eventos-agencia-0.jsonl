@@ -1,5 +1,0 @@
-{"agencia":"agencia-0","tipo":"CRIAR_CONTA","timestampVetorial":[1,0,0],"horaParede":"2026-10-05T22:04:08.454661900Z","detalhes":{"idConta":0,"titular":"Ana","saldo":100.0}}
-{"agencia":"agencia-0","tipo":"TRANSFERENCIA_DEBITO","timestampVetorial":[2,0,0],"horaParede":"2026-10-05T22:04:18.745035Z","detalhes":{"valor":30.0,"agenciaDestino":1,"idOrigem":0,"saldoOrigem":70.0,"idDestino":1}}
-{"agencia":"agencia-0","tipo":"TRANSFERENCIA_PUBLICADA","timestampVetorial":[3,0,0],"horaParede":"2026-10-05T22:04:18.773845600Z","detalhes":{"agenciaDestino":1,"idOrigem":0,"idDestino":1,"valor":30.0}}
-{"agencia":"agencia-0","tipo":"CONFIRMACAO_CREDITO_RECEBIDA","timestampVetorial":[4,3,0],"horaParede":"2026-10-05T22:04:18.845344200Z","detalhes":{"idConta":1,"valor":30.0,"agenciaDestino":1}}
-{"agencia":"agencia-0","tipo":"DEPOSITO","timestampVetorial":[6,3,0],"horaParede":"2026-10-05T22:09:09.396310100Z","detalhes":{"idConta":0,"saldoAtual":71.0,"valor":1.0}}

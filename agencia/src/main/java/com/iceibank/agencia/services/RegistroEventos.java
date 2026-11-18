@@ -27,7 +27,12 @@ public class RegistroEventos {
 
         this.nomeAgencia = "agencia-" + agencia;
 
-        Path pastaDados = Paths.get("data");
+        Path pastaDados;
+        if (Files.exists(Paths.get("agencia"))) {
+            pastaDados = Paths.get("agencia", "data");
+        } else {
+            pastaDados = Paths.get("data");
+        }
 
         Files.createDirectories(pastaDados);
 
